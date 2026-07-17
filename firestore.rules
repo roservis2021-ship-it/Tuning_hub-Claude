@@ -1,0 +1,40 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Server-only Firebase Auth account used exclusively by the Stripe webhook
+    // to activate/deactivate Premium. Only its UID may write premium fields.
+    function isServerAccount() {
+      return request.auth != null && request.auth.uid == "tHYxPjssLehVM6E44Dur8NfhToT2";
+    }
+
+    function isOwner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    match /users/{uid} {
+      allow read, create: if isOwner(uid);
+      allow update: if isServerAccount()
+        || (isOwner(uid) && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['premium', 'premiumVehicleId']));
+    }
+
+    match /vehicles/{vehicleId} {
+      allow read, create: if true;
+      allow update: if resource.data.userId == null || isOwner(resource.data.userId) || isServerAccount();
+
+      match /{subcollection}/{docId} {
+        allow read, write: if get(/databases/$(database)/documents/vehicles/$(vehicleId)).data.userId == null
+          || isOwner(get(/databases/$(database)/documents/vehicles/$(vehicleId)).data.userId);
+      }
+    }
+
+    match /planCache/{hash} {
+      allow read, write: if true;
+    }
+
+    match /maintenanceGuideCache/{hash} {
+      allow read, write: if true;
+    }
+  }
+}
