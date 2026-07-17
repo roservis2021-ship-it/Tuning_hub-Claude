@@ -87,8 +87,32 @@ const TRANSMISSION_LABELS: Record<string, string> = {
 function PlanContent() {
   const searchParams = useSearchParams();
   const vehicleId = searchParams.get("vehicleId");
-  const { userDoc } = useAuth();
+  const { user, userDoc, refreshUserDoc } = useAuth();
   const isPremium = !!userDoc?.premium && userDoc.premiumVehicleId === vehicleId;
+  const justCheckedOut = searchParams.get("checkout") === "success";
+
+  useEffect(() => {
+    if (!justCheckedOut || isPremium) return;
+    const interval = setInterval(refreshUserDoc, 2000);
+    const timeout = setTimeout(() => clearInterval(interval), 20000);
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timeout);
+    };
+  }, [justCheckedOut, isPremium, refreshUserDoc]);
+
+  async function handleOpenBillingPortal() {
+    if (!user) return;
+    try {
+      const res = await fetch("/api/stripe/portal", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ uid: user.uid }),
+      });
+      const data = await res.json();
+      if (res.ok && data.url) window.location.href = data.url;
+    } catch {}
+  }
 
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [loading, setLoading] = useState(true);
@@ -279,7 +303,19 @@ function PlanContent() {
   return (
     <>
       <main className="mx-auto flex min-h-dvh max-w-2xl flex-col gap-5 px-4 py-6 pb-24">
-        <ScreenHeader title={`${vehicle.brand} ${vehicle.model}`} subtitle="Plan de acción tuning" backHref="/" />
+        <ScreenHeader
+          title={`${vehicle.brand} ${vehicle.model}`}
+          subtitle="Plan de acción tuning"
+          backHref="/"
+          onMenuClick={isPremium ? handleOpenBillingPortal : undefined}
+        />
+
+        {justCheckedOut && !isPremium && (
+          <p className="-mt-3 flex items-center justify-center gap-2 text-center text-xs text-accent">
+            <span className="h-3 w-3 animate-spin rounded-full border-2 border-accent/30 border-t-accent" />
+            Activando tu Premium…
+          </p>
+        )}
 
         {aiFailed && (
           <p className="-mt-3 text-center text-xs text-zinc-500">

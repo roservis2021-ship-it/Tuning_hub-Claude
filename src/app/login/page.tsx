@@ -3,7 +3,7 @@
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase-client";
 import { display } from "@/lib/fonts";
 
@@ -25,30 +25,10 @@ function LoginContent() {
     try {
       const cred = await signInWithEmailAndPassword(auth, email, password);
 
-      if (intent === "premium") {
-        const userRef = doc(db, "users", cred.user.uid);
-        const snap = await getDoc(userRef);
-        const existingPremiumVehicleId = snap.exists() ? (snap.data().premiumVehicleId as string | undefined) : undefined;
-
-        if (existingPremiumVehicleId && vehicleId && existingPremiumVehicleId !== vehicleId) {
-          setError("Tu cuenta Premium ya está vinculada a otro vehículo. Cada cuenta gestiona un único coche.");
-          setSubmitting(false);
-          return;
-        }
-
-        if (snap.exists()) {
-          await setDoc(userRef, { premium: true, ...(vehicleId ? { premiumVehicleId: vehicleId } : {}) }, { merge: true });
-        } else {
-          await setDoc(userRef, {
-            email,
-            premium: true,
-            ...(vehicleId ? { premiumVehicleId: vehicleId } : {}),
-            createdAt: new Date(),
-          });
-        }
-        if (vehicleId) {
-          await updateDoc(doc(db, "vehicles", vehicleId), { userId: cred.user.uid });
-        }
+      if (intent === "premium" && vehicleId) {
+        await updateDoc(doc(db, "vehicles", vehicleId), { userId: cred.user.uid }).catch(() => {});
+        router.push(`/premium?vehicleId=${vehicleId}`);
+        return;
       }
 
       router.push(vehicleId ? `/garaje/plan?vehicleId=${vehicleId}` : "/");

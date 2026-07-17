@@ -35,12 +35,10 @@ function RegistroContent() {
     setSubmitting(true);
     try {
       const cred = await createUserWithEmailAndPassword(auth, email, password);
-      const isPremium = intent === "premium";
 
       await setDoc(doc(db, "users", cred.user.uid), {
         email,
-        premium: isPremium,
-        ...(isPremium && vehicleId ? { premiumVehicleId: vehicleId } : {}),
+        premium: false,
         createdAt: serverTimestamp(),
       });
 
@@ -48,7 +46,11 @@ function RegistroContent() {
         await updateDoc(doc(db, "vehicles", vehicleId), { userId: cred.user.uid });
       }
 
-      router.push(vehicleId ? `/garaje/plan?vehicleId=${vehicleId}` : "/");
+      if (intent === "premium" && vehicleId) {
+        router.push(`/premium?vehicleId=${vehicleId}`);
+      } else {
+        router.push(vehicleId ? `/garaje/plan?vehicleId=${vehicleId}` : "/");
+      }
     } catch (err) {
       setError(mapAuthError(err));
     } finally {

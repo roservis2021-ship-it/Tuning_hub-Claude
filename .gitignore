@@ -4,8 +4,6 @@ node_modules
 # Keep environment variables out of version control
 .env
 
-/generated/prisma
-
 # Proyectos aparte, sin relación con la web de Next.js
 /tuninghub_dashboard
 /tuninghub_video_creator

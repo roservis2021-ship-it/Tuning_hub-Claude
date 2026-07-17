@@ -2,8 +2,6 @@
 
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { doc, updateDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase-client";
 import { useAuth } from "@/lib/auth-context";
 import { display } from "@/lib/fonts";
 import { LedBorderCard } from "@/components/LedBorderCard";
@@ -44,7 +42,7 @@ function PremiumContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const vehicleId = searchParams.get("vehicleId");
-  const { user, userDoc, refreshUserDoc } = useAuth();
+  const { user, userDoc } = useAuth();
 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -58,23 +56,21 @@ function PremiumContent() {
       return;
     }
 
-    if (lockedToOtherVehicle) return;
+    if (lockedToOtherVehicle || !vehicleId) return;
 
     setSubmitting(true);
     setError(null);
     try {
-      await updateDoc(doc(db, "users", user.uid), {
-        premium: true,
-        ...(vehicleId ? { premiumVehicleId: vehicleId } : {}),
+      const res = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ uid: user.uid, email: user.email, vehicleId }),
       });
-      if (vehicleId) {
-        await updateDoc(doc(db, "vehicles", vehicleId), { userId: user.uid });
-      }
-      await refreshUserDoc();
-      router.push(vehicleId ? `/garaje/plan?vehicleId=${vehicleId}` : "/");
+      const data = await res.json();
+      if (!res.ok || !data.url) throw new Error(data.error ?? "No se pudo iniciar el pago");
+      window.location.href = data.url;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "No se pudo activar Premium");
-    } finally {
+      setError(err instanceof Error ? err.message : "No se pudo iniciar el pago");
       setSubmitting(false);
     }
   }
@@ -162,7 +158,7 @@ function PremiumContent() {
           >
             <span className="flex items-center gap-2 text-lg font-bold uppercase tracking-wide">
               <CrownIcon className="h-5 w-5" />
-              {submitting ? "Activando..." : "Obtener plan completo"}
+              {submitting ? "Redirigiendo a Stripe..." : "Obtener plan completo"}
             </span>
             <span className="flex items-center gap-1 text-[11px] font-medium uppercase tracking-widest text-white/80">
               <LockIcon className="h-3 w-3" />
