@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase-client";
+import { asServerAccount } from "@/lib/firebase-server-auth";
 import { getStripe } from "@/lib/stripe";
 
 export async function POST(req: Request) {
@@ -11,16 +12,17 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Falta uid" }, { status: 400 });
   }
 
-  const userSnap = await getDoc(doc(db, "users", uid));
-  const stripeCustomerId = userSnap.exists() ? (userSnap.data().stripeCustomerId as string | undefined) : undefined;
-
-  if (!stripeCustomerId) {
-    return NextResponse.json({ error: "No se encontró la suscripción de este usuario" }, { status: 404 });
-  }
-
   const origin = new URL(req.url).origin;
 
   try {
+    await asServerAccount();
+    const userSnap = await getDoc(doc(db, "users", uid));
+    const stripeCustomerId = userSnap.exists() ? (userSnap.data().stripeCustomerId as string | undefined) : undefined;
+
+    if (!stripeCustomerId) {
+      return NextResponse.json({ error: "No se encontró la suscripción de este usuario" }, { status: 404 });
+    }
+
     const stripe = getStripe();
     const session = await stripe.billingPortal.sessions.create({
       customer: stripeCustomerId,

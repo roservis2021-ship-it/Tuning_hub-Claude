@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase-client";
+import { asServerAccount } from "@/lib/firebase-server-auth";
 import { getStripe } from "@/lib/stripe";
 
 export async function POST(req: Request) {
@@ -11,16 +12,17 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Faltan datos" }, { status: 400 });
   }
 
-  const userSnap = await getDoc(doc(db, "users", uid));
-  const existingPremiumVehicleId = userSnap.exists() ? (userSnap.data().premiumVehicleId as string | undefined) : undefined;
-
-  if (existingPremiumVehicleId && existingPremiumVehicleId !== vehicleId) {
-    return NextResponse.json({ error: "Tu cuenta Premium ya está vinculada a otro vehículo" }, { status: 409 });
-  }
-
   const origin = new URL(req.url).origin;
 
   try {
+    await asServerAccount();
+    const userSnap = await getDoc(doc(db, "users", uid));
+    const existingPremiumVehicleId = userSnap.exists() ? (userSnap.data().premiumVehicleId as string | undefined) : undefined;
+
+    if (existingPremiumVehicleId && existingPremiumVehicleId !== vehicleId) {
+      return NextResponse.json({ error: "Tu cuenta Premium ya está vinculada a otro vehículo" }, { status: 409 });
+    }
+
     const stripe = getStripe();
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",

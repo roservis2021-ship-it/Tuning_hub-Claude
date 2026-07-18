@@ -1,14 +1,10 @@
 import Stripe from "stripe";
 import { doc, updateDoc } from "firebase/firestore";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth, db } from "@/lib/firebase-client";
+import { db } from "@/lib/firebase-client";
+import { asServerAccount } from "@/lib/firebase-server-auth";
 import { getStripe } from "@/lib/stripe";
 
 export const runtime = "nodejs";
-
-async function asServerAccount() {
-  await signInWithEmailAndPassword(auth, process.env.FIREBASE_SERVER_EMAIL!, process.env.FIREBASE_SERVER_PASSWORD!);
-}
 
 export async function POST(req: Request) {
   const payload = await req.text();

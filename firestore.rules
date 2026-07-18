@@ -14,7 +14,8 @@ service cloud.firestore {
     }
 
     match /users/{uid} {
-      allow read, create: if isOwner(uid);
+      allow read: if isOwner(uid) || isServerAccount();
+      allow create: if isOwner(uid);
       allow update: if isServerAccount()
         || (isOwner(uid) && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['premium', 'premiumVehicleId']));
     }
