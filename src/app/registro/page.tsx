@@ -43,7 +43,7 @@ function RegistroContent() {
       });
 
       if (vehicleId) {
-        await updateDoc(doc(db, "vehicles", vehicleId), { userId: cred.user.uid });
+        await updateDoc(doc(db, "vehicles", vehicleId), { userId: cred.user.uid }).catch(() => {});
       }
 
       if (intent === "premium" && vehicleId) {
