@@ -14,14 +14,14 @@ export async function POST(req: Request) {
   try {
     const stripe = getStripe();
     const session = await stripe.checkout.sessions.create({
+      ui_mode: "embedded_page",
       mode: "subscription",
       line_items: [{ price: process.env.STRIPE_PRICE_ID!, quantity: 1 }],
       subscription_data: { metadata: { vehicleId } },
-      success_url: `${origin}/completar-cuenta?session_id={CHECKOUT_SESSION_ID}&vehicleId=${vehicleId}`,
-      cancel_url: `${origin}/premium?vehicleId=${vehicleId}`,
+      return_url: `${origin}/completar-cuenta?session_id={CHECKOUT_SESSION_ID}&vehicleId=${vehicleId}`,
     });
 
-    return NextResponse.json({ url: session.url });
+    return NextResponse.json({ clientSecret: session.client_secret });
   } catch (err) {
     console.error("stripe checkout: fallo al crear la sesión", { vehicleId, message: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "No se pudo iniciar el pago" }, { status: 502 });

@@ -45,29 +45,14 @@ function PremiumContent() {
   const { userDoc } = useAuth();
 
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const lockedToOtherVehicle =
     !!userDoc?.premium && !!userDoc.premiumVehicleId && userDoc.premiumVehicleId !== vehicleId;
 
-  async function handleSubscribe() {
+  function handleSubscribe() {
     if (lockedToOtherVehicle || !vehicleId) return;
-
     setSubmitting(true);
-    setError(null);
-    try {
-      const res = await fetch("/api/stripe/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ vehicleId }),
-      });
-      const data = await res.json();
-      if (!res.ok || !data.url) throw new Error(data.error ?? "No se pudo iniciar el pago");
-      window.location.href = data.url;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "No se pudo iniciar el pago");
-      setSubmitting(false);
-    }
+    router.push(`/pago?vehicleId=${vehicleId}`);
   }
 
   return (
@@ -152,8 +137,6 @@ function PremiumContent() {
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
         <div className="mx-auto flex max-w-md flex-col gap-2 px-5 py-3">
-          {error && <p className="rounded-md bg-red-950/50 px-4 py-2 text-sm text-red-400">{error}</p>}
-
           <button
             onClick={handleSubscribe}
             disabled={submitting}
