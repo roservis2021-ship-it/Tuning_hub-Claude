@@ -21,25 +21,8 @@ export async function POST(req: Request) {
   }
 
   try {
-    if (event.type === "checkout.session.completed") {
-      const session = event.data.object as Stripe.Checkout.Session;
-      const uid = session.client_reference_id;
-      const subscriptionId = typeof session.subscription === "string" ? session.subscription : session.subscription?.id;
-      const subscription = subscriptionId ? await stripe.subscriptions.retrieve(subscriptionId) : null;
-      const vehicleId = subscription?.metadata?.vehicleId;
-
-      if (uid && vehicleId) {
-        await asServerAccount();
-        await updateDoc(doc(db, "users", uid), {
-          premium: true,
-          premiumVehicleId: vehicleId,
-          stripeCustomerId: session.customer,
-          stripeSubscriptionId: subscriptionId ?? null,
-        });
-        await updateDoc(doc(db, "vehicles", vehicleId), { userId: uid });
-      }
-    }
-
+    // La activación del Premium la realiza /api/complete-signup tras crear la
+    // cuenta. Aquí solo desactivamos al cancelar/expirar la suscripción.
     if (event.type === "customer.subscription.deleted") {
       const subscription = event.data.object as Stripe.Subscription;
       const uid = subscription.metadata?.uid;

@@ -42,7 +42,7 @@ function PremiumContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const vehicleId = searchParams.get("vehicleId");
-  const { user, userDoc } = useAuth();
+  const { userDoc } = useAuth();
 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -51,11 +51,6 @@ function PremiumContent() {
     !!userDoc?.premium && !!userDoc.premiumVehicleId && userDoc.premiumVehicleId !== vehicleId;
 
   async function handleSubscribe() {
-    if (!user) {
-      router.push(`/registro${vehicleId ? `?vehicleId=${vehicleId}&intent=premium` : "?intent=premium"}`);
-      return;
-    }
-
     if (lockedToOtherVehicle || !vehicleId) return;
 
     setSubmitting(true);
@@ -64,7 +59,7 @@ function PremiumContent() {
       const res = await fetch("/api/stripe/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ uid: user.uid, email: user.email, vehicleId }),
+        body: JSON.stringify({ vehicleId }),
       });
       const data = await res.json();
       if (!res.ok || !data.url) throw new Error(data.error ?? "No se pudo iniciar el pago");

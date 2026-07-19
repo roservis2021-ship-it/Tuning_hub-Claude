@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { ClipboardNavIcon, WrenchNavIcon, PulseNavIcon, LockIcon } from "@/components/icons";
+import { ClipboardNavIcon, WrenchNavIcon, PulseNavIcon, UserNavIcon, LockIcon } from "@/components/icons";
 
 type Tab = {
   href: string;
@@ -16,6 +16,7 @@ function buildTabs(vehicleId: string | null): Tab[] {
     { href: `/garaje/plan${qs}`, label: "Plan", icon: ClipboardNavIcon, premium: false },
     { href: `/garaje/mantenimiento${qs}`, label: "Mantenim.", icon: WrenchNavIcon, premium: true },
     { href: `/garaje/diagnosticar${qs}`, label: "Diagnóstico", icon: PulseNavIcon, premium: true },
+    { href: `/perfil`, label: "Perfil", icon: UserNavIcon, premium: true },
   ];
 }
 

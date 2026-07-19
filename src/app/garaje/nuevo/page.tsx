@@ -45,7 +45,7 @@ const initialState: FormState = {
 
 export default function NuevoVehiculoPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, userDoc, refreshUserDoc } = useAuth();
   const [form, setForm] = useState<FormState>(initialState);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
   const [submitting, setSubmitting] = useState(false);
@@ -112,6 +112,16 @@ export default function NuevoVehiculoPage() {
         userId: user?.uid ?? null,
         createdAt: serverTimestamp(),
       });
+
+      // Cliente Premium que eligió "buscar otro coche": este pasa a ser su vehículo.
+      if (user && userDoc?.premium && !userDoc.premiumVehicleId) {
+        await fetch("/api/claim-vehicle", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ uid: user.uid, vehicleId: docRef.id }),
+        }).catch(() => {});
+        await refreshUserDoc();
+      }
 
       router.push(`/garaje/objetivo?vehicleId=${docRef.id}`);
     } catch (err) {

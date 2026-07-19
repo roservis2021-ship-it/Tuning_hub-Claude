@@ -1,17 +1,13 @@
 "use client";
 
 import { Suspense, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { doc, updateDoc } from "firebase/firestore";
-import { getFirebaseAuth, db } from "@/lib/firebase-client";
+import { getFirebaseAuth } from "@/lib/firebase-client";
 import { display } from "@/lib/fonts";
 
 function LoginContent() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const vehicleId = searchParams.get("vehicleId");
-  const intent = searchParams.get("intent");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,15 +19,8 @@ function LoginContent() {
     setError(null);
     setSubmitting(true);
     try {
-      const cred = await signInWithEmailAndPassword(getFirebaseAuth(), email, password);
-
-      if (intent === "premium" && vehicleId) {
-        await updateDoc(doc(db, "vehicles", vehicleId), { userId: cred.user.uid }).catch(() => {});
-        router.push(`/premium?vehicleId=${vehicleId}`);
-        return;
-      }
-
-      router.push(vehicleId ? `/garaje/plan?vehicleId=${vehicleId}` : "/");
+      await signInWithEmailAndPassword(getFirebaseAuth(), email, password);
+      router.push("/perfil");
     } catch (err) {
       setError(mapAuthError(err));
     } finally {
@@ -84,15 +73,17 @@ function LoginContent() {
         </button>
       </form>
 
-      <p className="text-center text-sm text-zinc-500">
-        ¿No tienes cuenta?{" "}
-        <a
-          href={`/registro${vehicleId ? `?vehicleId=${vehicleId}` : ""}${intent ? `${vehicleId ? "&" : "?"}intent=${intent}` : ""}`}
-          className="text-accent hover:underline"
-        >
-          Créala
+      <div className="flex flex-col items-center gap-2 text-center text-sm text-zinc-500">
+        <a href="/recuperar" className="text-accent hover:underline">
+          ¿Olvidaste tu contraseña?
         </a>
-      </p>
+        <p>
+          ¿Aún no eres Premium?{" "}
+          <a href="/garaje/nuevo" className="text-accent hover:underline">
+            Empieza aquí
+          </a>
+        </p>
+      </div>
     </main>
   );
 }

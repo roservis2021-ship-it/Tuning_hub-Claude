@@ -7,6 +7,7 @@ import { getFirebaseAuth, db } from "@/lib/firebase-client";
 
 type UserDoc = {
   email: string;
+  name?: string;
   premium: boolean;
   premiumVehicleId?: string;
   createdAt?: unknown;

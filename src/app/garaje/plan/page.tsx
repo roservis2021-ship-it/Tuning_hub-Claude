@@ -7,6 +7,7 @@ import { db } from "@/lib/firebase-client";
 import { useAuth } from "@/lib/auth-context";
 import { AppNav } from "@/components/AppNav";
 import { AssistantFab } from "@/components/AssistantFab";
+import { VerifyEmailBanner } from "@/components/VerifyEmailBanner";
 import { ScreenHeader } from "@/components/ScreenHeader";
 import { HeroBanner } from "@/components/HeroBanner";
 import { QuickActions } from "@/components/QuickActions";
@@ -309,6 +310,8 @@ function PlanContent() {
           backHref="/"
           onMenuClick={isPremium ? handleOpenBillingPortal : undefined}
         />
+
+        {isPremium && <VerifyEmailBanner />}
 
         {justCheckedOut && !isPremium && (
           <p className="-mt-3 flex items-center justify-center gap-2 text-center text-xs text-accent">

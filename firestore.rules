@@ -30,6 +30,11 @@ service cloud.firestore {
       }
     }
 
+    // Registro anti-reuso de sesiones de pago; solo la cuenta de servidor.
+    match /usedSessions/{sessionId} {
+      allow read, write: if isServerAccount();
+    }
+
     match /planCache/{hash} {
       allow read, write: if true;
     }
