@@ -162,16 +162,17 @@ function PremiumContent() {
           <button
             onClick={handleSubscribe}
             disabled={submitting}
-            className="animate-neon-flicker flex w-full items-center justify-between gap-3 rounded-md border-2 border-accent bg-accent px-5 py-3 text-white transition hover:bg-accent/90 disabled:opacity-60"
+            className="relative flex w-full items-center justify-between gap-3 overflow-hidden rounded-md border-2 border-accent bg-accent px-5 py-3 text-white shadow-[0_0_22px_rgba(230,24,44,0.45)] transition hover:bg-accent/90 disabled:opacity-60"
           >
-            <span className="flex flex-col items-start leading-none">
+            <span className="pointer-events-none absolute inset-y-0 left-0 w-1/3 animate-shine bg-gradient-to-r from-transparent via-white/45 to-transparent" />
+            <span className="relative flex flex-col items-start leading-none">
               <span className="flex items-baseline gap-2">
                 <span className="text-2xl font-extrabold">11,99€</span>
                 <span className="text-sm font-semibold text-white/60 line-through">18,99€</span>
               </span>
               <span className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-white/80">al mes</span>
             </span>
-            <span className="flex items-center gap-2 text-base font-bold uppercase tracking-wide">
+            <span className="relative flex items-center gap-2 text-base font-bold uppercase tracking-wide">
               {submitting ? "Redirigiendo…" : "Obtener plan"}
               <CrownIcon className="h-5 w-5" />
             </span>

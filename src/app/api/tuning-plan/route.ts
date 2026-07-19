@@ -18,15 +18,17 @@ const TuningPlanSchema = z.object({
     distribucion: z.string().describe(SHORT_ANSWER + ", ej. 'Cadena — revisar cada 150.000 km'"),
     traccion: z.string().describe(SHORT_ANSWER + ", ej. 'Delantera (FWD)' o 'Total (4x4)' o 'Trasera (RWD)'"),
   }),
-  stages: z.array(
-    z.object({
-      title: z.string(),
-      items: z.array(z.string()),
-      note: z.string().optional(),
-    })
-  ),
-  risks: z.array(z.string()),
-  maintenance: z.array(z.string()),
+  stages: z
+    .array(
+      z.object({
+        title: z.string(),
+        items: z.array(z.string()).describe("EXACTAMENTE 2 o 3 ítems muy concisos, no más"),
+        note: z.string().optional().describe("Opcional, una sola frase corta"),
+      })
+    )
+    .describe("MÁXIMO 2 etapas (versión gratuita limitada). No incluyas más de 2 aunque el coche dé para más"),
+  risks: z.array(z.string()).describe("MÁXIMO 3 riesgos, cada uno en una frase corta"),
+  maintenance: z.array(z.string()).describe("MÁXIMO 3 puntos de mantenimiento, cada uno en una frase corta"),
 });
 
 const FUEL_LABELS: Record<string, string> = {
@@ -67,6 +69,7 @@ function buildCacheKey(params: {
   const mileageBucket = Math.floor(params.mileage / MILEAGE_BUCKET_SIZE) * MILEAGE_BUCKET_SIZE;
   const objectivesKey = [...(params.objectives ?? [])].sort().join(",");
   const raw = [
+    "v2-free-limited",
     params.brand,
     params.model,
     params.generation,
@@ -124,11 +127,11 @@ Dado un vehículo concreto y el uso que le va a dar su propietario, genera un an
    - distribucion: "Cadena — revisar cada 150.000 km" (no un párrafo justificando por qué)
    Si se indica un código de motor concreto en los datos del vehículo, úsalo como dato cierto para potencia y par (no lo trates como estimación). Si no se indica, da potencia y par orientativos marcados como "estimado". Determina también la aspiración (atmosférico/turbo/híbrido/eléctrico), la centralita (ECU) si la conoces (si no, "No disponible"), el tipo de distribución (correa/cadena) con su intervalo habitual, y la tracción (delantera/trasera/total, indicando FWD/RWD/AWD o 4x4 si aplica).
 
-2. Plan de modificaciones: organízalo en etapas realistas y coherentes con el tipo de motor, el kilometraje del vehículo (si el kilometraje es alto, antepone una etapa de puesta a punto/revisión antes de tocar potencia) y el objetivo de uso declarado (uso diario, tramos de carretera, circuito o competición). No recomiendes modificaciones agresivas en motores con mucho kilometraje sin antes recomendar una revisión.
+2. Plan de modificaciones (VERSIÓN GRATUITA — LIMITADA A PROPÓSITO): muestra SOLO las 2 primeras etapas del plan, con 2-3 ítems concisos cada una. Es una vista previa gratuita: debe ser útil y despertar interés, pero incompleta. En la última etapa incluye una 'note' breve que insinúe que hay más etapas y detalle en el plan completo (Premium), sin sonar a anuncio agresivo (ej: "Las siguientes etapas (frenos, suspensión, ajuste final) se detallan en el plan completo"). Si el kilometraje es alto, la etapa 0/1 debe ser de puesta a punto antes de tocar potencia. No recomiendes modificaciones agresivas en motores con mucho kilometraje sin antes recomendar una revisión.
 
-3. Riesgos y mantenimiento: riesgos reales y específicos de modificar ESE coche (no genéricos), incluyendo aspectos legales en España (ITV, homologación de reformas, seguro), y el mantenimiento adicional que exigirán las modificaciones propuestas.
+3. Riesgos y mantenimiento (LIMITADO): MÁXIMO 3 riesgos y MÁXIMO 3 puntos de mantenimiento, los más importantes, cada uno en una frase corta. Riesgos reales y específicos de ESE coche (no genéricos), incluyendo lo legal en España (ITV, homologación, seguro) cuando aplique.
 
-Sé preciso y honesto sobre la incertidumbre, pero sin explayarte: si algo es una estimación, márcalo con una palabra ("estimado") en vez de una frase larga.`,
+Regla general: en la versión gratuita sé BREVE y selectivo. Da lo esencial y deja claro implícitamente que el plan completo aporta más. Si algo es estimación, márcalo con la palabra ("estimado"), no con una frase.`,
       messages: [
         {
           role: "user",

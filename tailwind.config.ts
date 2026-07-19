@@ -37,15 +37,22 @@ const config: Config = {
         "border-spin": {
           "100%": { transform: "translate(-50%, -50%) rotate(1turn)" },
         },
-        "neon-flicker": {
-          "0%, 85%, 89%, 93%, 100%": {
-            boxShadow: "0 0 18px 3px rgba(230,24,44,0.65), 0 0 42px 10px rgba(230,24,44,0.35)",
-            filter: "brightness(1)",
+        "neon-text": {
+          "0%, 100%": {
+            textShadow:
+              "0 0 6px rgba(255,255,255,0.35), 0 0 14px rgba(230,24,44,0.9), 0 0 30px rgba(230,24,44,0.7), 0 0 52px rgba(230,24,44,0.45)",
           },
-          "87%, 91%": {
-            boxShadow: "0 0 6px 1px rgba(230,24,44,0.25)",
-            filter: "brightness(0.85)",
+          "45%": {
+            textShadow:
+              "0 0 10px rgba(255,255,255,0.55), 0 0 22px rgba(230,24,44,1), 0 0 44px rgba(230,24,44,0.85), 0 0 78px rgba(230,24,44,0.6)",
           },
+          "82%": {
+            textShadow: "0 0 4px rgba(255,255,255,0.25), 0 0 10px rgba(230,24,44,0.55)",
+          },
+        },
+        shine: {
+          "0%": { transform: "translateX(-160%) skewX(-20deg)" },
+          "55%, 100%": { transform: "translateX(320%) skewX(-20deg)" },
         },
       },
       animation: {
@@ -54,7 +61,8 @@ const config: Config = {
         "spotlight-sway": "spotlight-sway 11s ease-in-out infinite",
         shimmer: "shimmer 2.5s linear infinite",
         "border-spin": "border-spin 4s linear infinite",
-        "neon-flicker": "neon-flicker 5s ease-in-out infinite",
+        "neon-text": "neon-text 3.2s ease-in-out infinite",
+        shine: "shine 3.8s ease-in-out infinite",
       },
     },
   },
