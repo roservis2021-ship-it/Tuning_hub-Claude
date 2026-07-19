@@ -76,7 +76,8 @@ function PremiumContent() {
   }
 
   return (
-    <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-8 px-6 py-16">
+    <>
+    <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-8 px-6 pt-16 pb-48">
       <div>
         <span className="text-xs font-bold uppercase tracking-[0.35em] text-accent">Premium</span>
         <h1 className={`${display.className} italic mt-2 text-4xl font-extrabold uppercase leading-[0.95] tracking-tight text-zinc-50`}>
@@ -135,9 +136,7 @@ function PremiumContent() {
         </div>
       </div>
 
-      {error && <p className="rounded-md bg-red-950/50 px-4 py-3 text-sm text-red-400">{error}</p>}
-
-      {lockedToOtherVehicle ? (
+      {lockedToOtherVehicle && (
         <div className="flex flex-col gap-3 text-center">
           <p className="rounded-md border border-accent/40 bg-accent/10 px-4 py-3 text-sm text-zinc-300">
             Tu cuenta Premium ya está vinculada a otro vehículo. Cada cuenta gestiona un único coche.
@@ -149,38 +148,47 @@ function PremiumContent() {
             Ir a tu vehículo Premium
           </a>
         </div>
-      ) : (
-        <div className="flex flex-col gap-3">
+      )}
+    </main>
+
+    {!lockedToOtherVehicle && (
+      <div
+        className="fixed inset-x-0 bottom-0 z-40 border-t border-garage-700 bg-garage-950/95 backdrop-blur"
+        style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+      >
+        <div className="mx-auto flex max-w-md flex-col gap-2 px-5 py-3">
+          {error && <p className="rounded-md bg-red-950/50 px-4 py-2 text-sm text-red-400">{error}</p>}
+
           <button
             onClick={handleSubscribe}
             disabled={submitting}
-            className="animate-neon-flicker flex flex-col items-center gap-1 rounded-md border-2 border-accent bg-accent px-6 py-4 text-white transition hover:bg-accent/90 disabled:opacity-50"
+            className="animate-neon-flicker flex w-full items-center justify-between gap-3 rounded-md border-2 border-accent bg-accent px-5 py-3 text-white transition hover:bg-accent/90 disabled:opacity-60"
           >
-            <span className="flex items-center gap-2 text-lg font-bold uppercase tracking-wide">
-              <CrownIcon className="h-5 w-5" />
-              {submitting ? "Redirigiendo a Stripe..." : "Obtener plan completo"}
+            <span className="flex flex-col items-start leading-none">
+              <span className="flex items-baseline gap-2">
+                <span className="text-2xl font-extrabold">11,99€</span>
+                <span className="text-sm font-semibold text-white/60 line-through">18,99€</span>
+              </span>
+              <span className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-white/80">al mes</span>
             </span>
-            <span className="flex items-center gap-1 text-[11px] font-medium uppercase tracking-widest text-white/80">
-              <LockIcon className="h-3 w-3" />
-              Acceso inmediato
+            <span className="flex items-center gap-2 text-base font-bold uppercase tracking-wide">
+              {submitting ? "Redirigiendo…" : "Obtener plan"}
+              <CrownIcon className="h-5 w-5" />
             </span>
           </button>
 
-          <div className="flex items-center justify-center gap-x-4 gap-y-1 flex-wrap text-center">
+          <div className="flex items-center justify-center gap-x-3 gap-y-0.5 flex-wrap text-center">
             {FOOTER_TRUST.map((t) => (
-              <span key={t.label} className="flex items-center gap-1.5 text-[10px] uppercase tracking-wide text-zinc-500">
-                <t.icon className="h-3.5 w-3.5 text-emerald-400" />
+              <span key={t.label} className="flex items-center gap-1 text-[9px] uppercase tracking-wide text-zinc-500">
+                <t.icon className="h-3 w-3 text-emerald-400" />
                 {t.label}
               </span>
             ))}
           </div>
-
-          <p className="text-center text-xs text-zinc-600">
-            {user ? "Se activará sobre tu cuenta actual." : "Crearemos tu cuenta en el siguiente paso."}
-          </p>
         </div>
-      )}
-    </main>
+      </div>
+    )}
+    </>
   );
 }
 
