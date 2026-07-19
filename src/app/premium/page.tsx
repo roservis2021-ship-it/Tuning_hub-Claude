@@ -17,6 +17,7 @@ import {
   TrendUpIcon,
   CrownIcon,
   RefreshIcon,
+  CloseIcon,
 } from "@/components/icons";
 
 const TRUST_BADGES = [
@@ -55,8 +56,23 @@ function PremiumContent() {
     router.push(`/pago?vehicleId=${vehicleId}`);
   }
 
+  function handleClose() {
+    if (typeof window !== "undefined" && window.history.length > 1) {
+      router.back();
+    } else {
+      router.push("/");
+    }
+  }
+
   return (
     <>
+    <button
+      onClick={handleClose}
+      aria-label="Cerrar y seguir navegando"
+      className="fixed right-4 top-4 z-50 flex h-9 w-9 items-center justify-center rounded-full border border-garage-700 bg-garage-900/90 text-zinc-400 backdrop-blur transition hover:border-accent hover:text-accent"
+    >
+      <CloseIcon className="h-4 w-4" />
+    </button>
     <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-8 px-6 pt-16 pb-48">
       <div>
         <span className="text-xs font-bold uppercase tracking-[0.35em] text-accent">Premium</span>

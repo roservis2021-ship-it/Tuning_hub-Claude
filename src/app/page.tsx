@@ -1,8 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Archivo_Black } from "next/font/google";
+import { Archivo_Black, Caveat } from "next/font/google";
 
 const display = Archivo_Black({ subsets: ["latin"], weight: "400" });
+const handwriting = Caveat({ subsets: ["latin"], weight: ["700"] });
 
 const FEATURES = [
   { label: "Fichas técnicas", icon: DocumentIcon },
@@ -14,6 +15,18 @@ const FEATURES = [
 export default function HomePage() {
   return (
     <main className="relative isolate min-h-dvh overflow-hidden bg-garage-950">
+      <div
+        className="fixed inset-x-0 top-0 z-40 border-b border-white/10 bg-garage-950/70 backdrop-blur-sm"
+        style={{ paddingTop: "env(safe-area-inset-top)" }}
+      >
+        <p className="mx-auto max-w-3xl px-6 py-2.5 text-center text-xs text-zinc-400">
+          ¿Ya eres premium?{" "}
+          <Link href="/login" className="font-semibold text-accent hover:underline">
+            Inicia sesión
+          </Link>
+        </p>
+      </div>
+
       <div className="pointer-events-none absolute inset-0 -z-20 overflow-hidden">
         <Image
           src="/hero-bg.png"
@@ -49,7 +62,15 @@ export default function HomePage() {
         >
           <span className="text-zinc-100 [text-shadow:0_2px_18px_rgba(0,0,0,0.6)]">Tuning</span>
           <br />
-          <span className="animate-neon-text italic text-accent">Hub</span>
+          <span className={`${handwriting.className} relative inline-block animate-neon-text text-[1.5em] normal-case leading-none text-accent`}>
+            Hub
+            <span
+              aria-hidden
+              className="animate-shimmer absolute inset-0 bg-[length:200%_100%] bg-gradient-to-r from-transparent via-white/80 to-transparent bg-clip-text text-transparent"
+            >
+              Hub
+            </span>
+          </span>
         </h1>
 
         <p className="animate-fade-up max-w-md text-balance text-lg text-zinc-300" style={{ animationDelay: "180ms" }}>
