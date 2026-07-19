@@ -1,9 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Archivo_Black, Caveat } from "next/font/google";
+import { Archivo_Black } from "next/font/google";
 
 const display = Archivo_Black({ subsets: ["latin"], weight: "400" });
-const handwriting = Caveat({ subsets: ["latin"], weight: ["700"] });
 
 const FEATURES = [
   { label: "Fichas técnicas", icon: DocumentIcon },
@@ -62,15 +61,7 @@ export default function HomePage() {
         >
           <span className="text-zinc-100 [text-shadow:0_2px_18px_rgba(0,0,0,0.6)]">Tuning</span>
           <br />
-          <span className={`${handwriting.className} relative inline-block animate-neon-text text-[1.5em] normal-case leading-none text-accent`}>
-            Hub
-            <span
-              aria-hidden
-              className="animate-shimmer absolute inset-0 bg-[length:200%_100%] bg-gradient-to-r from-transparent via-white/80 to-transparent bg-clip-text text-transparent"
-            >
-              Hub
-            </span>
-          </span>
+          <span className="animate-neon-text italic text-accent">Hub</span>
         </h1>
 
         <p className="animate-fade-up max-w-md text-balance text-lg text-zinc-300" style={{ animationDelay: "180ms" }}>
