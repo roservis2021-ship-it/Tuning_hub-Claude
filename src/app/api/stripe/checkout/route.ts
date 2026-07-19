@@ -36,8 +36,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ url: session.url });
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    console.error("stripe checkout: fallo al crear la sesión", { uid, vehicleId, message });
-    return NextResponse.json({ error: "No se pudo iniciar el pago", debug: message }, { status: 502 });
+    console.error("stripe checkout: fallo al crear la sesión", { uid, vehicleId, message: err instanceof Error ? err.message : String(err) });
+    return NextResponse.json({ error: "No se pudo iniciar el pago" }, { status: 502 });
   }
 }

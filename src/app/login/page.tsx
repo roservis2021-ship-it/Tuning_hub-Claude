@@ -4,7 +4,7 @@ import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { doc, updateDoc } from "firebase/firestore";
-import { auth, db } from "@/lib/firebase-client";
+import { getFirebaseAuth, db } from "@/lib/firebase-client";
 import { display } from "@/lib/fonts";
 
 function LoginContent() {
@@ -23,7 +23,7 @@ function LoginContent() {
     setError(null);
     setSubmitting(true);
     try {
-      const cred = await signInWithEmailAndPassword(auth, email, password);
+      const cred = await signInWithEmailAndPassword(getFirebaseAuth(), email, password);
 
       if (intent === "premium" && vehicleId) {
         await updateDoc(doc(db, "vehicles", vehicleId), { userId: cred.user.uid }).catch(() => {});

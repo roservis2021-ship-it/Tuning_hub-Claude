@@ -4,7 +4,7 @@ import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc, updateDoc, serverTimestamp } from "firebase/firestore";
-import { auth, db } from "@/lib/firebase-client";
+import { getFirebaseAuth, db } from "@/lib/firebase-client";
 import { display } from "@/lib/fonts";
 
 function RegistroContent() {
@@ -34,7 +34,7 @@ function RegistroContent() {
 
     setSubmitting(true);
     try {
-      const cred = await createUserWithEmailAndPassword(auth, email, password);
+      const cred = await createUserWithEmailAndPassword(getFirebaseAuth(), email, password);
 
       await setDoc(doc(db, "users", cred.user.uid), {
         email,
