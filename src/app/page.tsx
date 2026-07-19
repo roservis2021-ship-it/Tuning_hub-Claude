@@ -8,7 +8,7 @@ const FEATURES = [
   { label: "Fichas técnicas", icon: DocumentIcon },
   { label: "Plan de modificación", icon: ChartIcon },
   { label: "Mantenimiento y averías", icon: WrenchIcon },
-  { label: "Ingeniero IA", icon: ChatIcon },
+  { label: "Ingeniero", icon: ChatIcon },
 ];
 
 export default function HomePage() {
@@ -100,7 +100,7 @@ export default function HomePage() {
         >
           <ShieldIcon className="h-4 w-4 shrink-0 text-accent" />
           <span>
-            <span className="text-accent">IA real</span> · Gratis para empezar ·{" "}
+            <span className="text-accent">Guías reales</span> · Gratis para empezar ·{" "}
             <span className="text-accent">Para apasionados</span>
           </span>
         </div>

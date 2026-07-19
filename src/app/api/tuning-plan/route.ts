@@ -176,7 +176,7 @@ Genera el análisis y plan de modificaciones para este vehículo.`,
       message: err instanceof Error ? err.message : String(err),
     });
     return NextResponse.json(
-      { error: err instanceof Error ? err.message : "Error al generar el plan con IA" },
+      { error: err instanceof Error ? err.message : "Error al generar el plan" },
       { status: 502 }
     );
   }

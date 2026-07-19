@@ -94,7 +94,7 @@ Deja claro en tus respuestas que esto es una estimación y no sustituye una insp
     const status = err instanceof Anthropic.APIError ? err.status : undefined;
     console.error("diagnose: fallo al llamar a Claude", { brand, model, status, message: err instanceof Error ? err.message : String(err) });
     return NextResponse.json(
-      { error: err instanceof Error ? err.message : "Error al generar el diagnóstico con IA" },
+      { error: err instanceof Error ? err.message : "Error al generar el diagnóstico" },
       { status: 502 }
     );
   }

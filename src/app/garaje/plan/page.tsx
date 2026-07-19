@@ -168,7 +168,7 @@ function PlanContent() {
       body: JSON.stringify(vehicle),
     })
       .then(async (res) => {
-        if (!res.ok) throw new Error("La IA no pudo generar el plan");
+        if (!res.ok) throw new Error("No se pudo generar el plan");
         const data = await res.json();
         setAiPlan(data);
         updateDoc(doc(db, "vehicles", vehicleId), { aiPlan: data }).catch(() => {});
@@ -322,7 +322,7 @@ function PlanContent() {
 
         {aiFailed && (
           <p className="-mt-3 text-center text-xs text-zinc-500">
-            No se pudo contactar con la IA — mostrando una estimación básica.
+            No se pudo generar el plan — mostrando una estimación básica.
           </p>
         )}
 
@@ -442,7 +442,7 @@ function ProgressiveLoadingScreen({ vehicle }: { vehicle: Vehicle }) {
           style={{ width: `${progress}%` }}
         />
       </div>
-      <p className="text-xs text-zinc-500">Esto puede tardar unos segundos, la IA está preparando tu plan</p>
+      <p className="text-xs text-zinc-500">Esto puede tardar unos segundos, estamos preparando tu plan</p>
     </main>
   );
 }
@@ -500,7 +500,7 @@ function CaracteristicasScreen({
       </div>
       <p className="text-xs text-zinc-500">
         {isAi
-          ? "Análisis generado por IA a partir de los datos del vehículo. Consulta la ficha técnica oficial de tu unidad para datos certificados."
+          ? "Análisis personalizado a partir de los datos del vehículo. Consulta la ficha técnica oficial de tu unidad para datos certificados."
           : "Valores orientativos según la motorización y la marca. Consulta la ficha técnica oficial de tu unidad para datos exactos."}
       </p>
     </div>
@@ -551,7 +551,7 @@ function ModificacionesScreen({
         >
           <p className="font-semibold text-zinc-100">🔒 Seguimiento real de tus mods</p>
           <p className="text-sm text-zinc-300">
-            Registra lo que instalas y la IA calcula tu potencia y par estimados frente al plan, con el siguiente paso lógico.
+            Registra lo que instalas y calculamos tu potencia y par estimados frente al plan, con el siguiente paso lógico.
           </p>
           <span className="text-sm font-semibold text-accent">Mejorar a Premium →</span>
         </a>

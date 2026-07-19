@@ -157,7 +157,7 @@ function DiagnosticarContent() {
       />
 
       <p className="rounded-md border border-garage-700 bg-garage-900/40 px-4 py-3 text-xs text-zinc-500">
-        Esto es una estimación de IA, no sustituye una inspección presencial de un profesional. El micrófono
+        Esto es una estimación orientativa, no sustituye una inspección presencial de un profesional. El micrófono
         transcribe lo que dices (no analiza el sonido en sí); la foto sí se analiza visualmente.
       </p>
 

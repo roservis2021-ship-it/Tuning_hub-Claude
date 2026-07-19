@@ -30,7 +30,7 @@ const FEATURES = [
   { icon: EngineIcon, title: "Diagnosticar", desc: "Describe un problema o sube una foto y recibe un diagnóstico al instante." },
   { icon: WrenchNavIcon, title: "Mantenimiento", desc: "Historial completo, recordatorios y aviso de qué tienes pendiente." },
   { icon: GaugeIcon, title: "Modificaciones", desc: "Registra tus mods reales y sigue tu progreso frente al plan." },
-  { icon: MessageFabIcon, title: "Ingeniero", desc: "Chatea con tu ingeniero IA, que conoce tu coche, tu historial y tus mods." },
+  { icon: MessageFabIcon, title: "Ingeniero", desc: "Chatea con tu ingeniero, que conoce tu coche, tu historial y tus mods." },
 ];
 
 const FOOTER_TRUST = [

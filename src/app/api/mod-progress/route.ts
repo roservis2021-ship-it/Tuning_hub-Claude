@@ -101,7 +101,7 @@ Evalúa el progreso.`,
     const status = err instanceof Anthropic.APIError ? err.status : undefined;
     console.error("mod-progress: fallo al llamar a Claude", { vehicleId, status, message: err instanceof Error ? err.message : String(err) });
     return NextResponse.json(
-      { error: err instanceof Error ? err.message : "Error al evaluar el progreso con IA" },
+      { error: err instanceof Error ? err.message : "Error al evaluar el progreso" },
       { status: 502 }
     );
   }
