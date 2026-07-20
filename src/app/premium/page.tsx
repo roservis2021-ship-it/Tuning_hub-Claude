@@ -146,7 +146,7 @@ function PremiumContent() {
               <span className="text-xl font-extrabold">0,39€</span>
               <span className="text-xs font-semibold text-white/80">/día</span>
             </span>
-            <span className="mt-0.5 text-[10px] font-semibold uppercase tracking-widest text-white/70">
+            <span className="mt-0.5 text-[10px] font-semibold italic uppercase tracking-widest text-white/70">
               (11,99€/mes)
             </span>
           </span>
