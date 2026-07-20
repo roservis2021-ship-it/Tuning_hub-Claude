@@ -2,7 +2,6 @@
 
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useAuth } from "@/lib/auth-context";
 import { display } from "@/lib/fonts";
 import { LedBorderCard } from "@/components/LedBorderCard";
 import {
@@ -43,15 +42,11 @@ function PremiumContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const vehicleId = searchParams.get("vehicleId");
-  const { userDoc } = useAuth();
 
   const [submitting, setSubmitting] = useState(false);
 
-  const lockedToOtherVehicle =
-    !!userDoc?.premium && !!userDoc.premiumVehicleId && userDoc.premiumVehicleId !== vehicleId;
-
   function handleSubscribe() {
-    if (lockedToOtherVehicle || !vehicleId) return;
+    if (!vehicleId) return;
     setSubmitting(true);
     router.push(`/pago?vehicleId=${vehicleId}`);
   }
@@ -132,57 +127,42 @@ function PremiumContent() {
         </div>
       </div>
 
-      {lockedToOtherVehicle && (
-        <div className="flex flex-col gap-3 text-center">
-          <p className="rounded-md border border-accent/40 bg-accent/10 px-4 py-3 text-sm text-zinc-300">
-            Tu cuenta Premium ya está vinculada a otro vehículo. Cada cuenta gestiona un único coche.
-          </p>
-          <a
-            href={`/garaje/plan?vehicleId=${userDoc?.premiumVehicleId}`}
-            className="rounded-md border-2 border-accent px-6 py-4 text-lg font-bold uppercase tracking-wide text-accent transition hover:bg-accent hover:text-white"
-          >
-            Ir a tu vehículo Premium
-          </a>
-        </div>
-      )}
     </main>
 
-    {!lockedToOtherVehicle && (
-      <div
-        className="fixed inset-x-0 bottom-0 z-40 border-t border-garage-700 bg-garage-950/95 backdrop-blur"
-        style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
-      >
-        <div className="mx-auto flex max-w-md flex-col gap-2 px-5 py-3">
-          <button
-            onClick={handleSubscribe}
-            disabled={submitting}
-            className="relative flex w-full items-center justify-between gap-3 overflow-hidden rounded-md border-2 border-accent bg-accent px-5 py-3 text-white shadow-[0_0_22px_rgba(230,24,44,0.45)] transition hover:bg-accent/90 disabled:opacity-60"
-          >
-            <span className="pointer-events-none absolute inset-y-0 left-0 w-1/3 animate-shine bg-gradient-to-r from-transparent via-white/45 to-transparent" />
-            <span className="relative flex flex-col items-start leading-none">
-              <span className="flex items-baseline gap-2">
-                <span className="text-2xl font-extrabold">11,99€</span>
-                <span className="text-sm font-semibold text-white/60 line-through">18,99€</span>
-              </span>
-              <span className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-white/80">al mes</span>
+    <div
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-garage-700 bg-garage-950/95 backdrop-blur"
+      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+    >
+      <div className="mx-auto flex max-w-md flex-col gap-2 px-5 py-3">
+        <button
+          onClick={handleSubscribe}
+          disabled={submitting}
+          className="relative flex w-full items-center justify-between gap-3 overflow-hidden rounded-md border-2 border-accent bg-accent px-5 py-3 text-white shadow-[0_0_22px_rgba(230,24,44,0.45)] transition hover:bg-accent/90 disabled:opacity-60"
+        >
+          <span className="pointer-events-none absolute inset-y-0 left-0 w-1/3 animate-shine bg-gradient-to-r from-transparent via-white/45 to-transparent" />
+          <span className="relative flex flex-col items-start leading-none">
+            <span className="flex items-baseline gap-2">
+              <span className="text-2xl font-extrabold">11,99€</span>
+              <span className="text-sm font-semibold text-white/60 line-through">18,99€</span>
             </span>
-            <span className="relative flex items-center gap-2 text-base font-bold uppercase tracking-wide">
-              {submitting ? "Redirigiendo…" : "Obtener plan"}
-              <CrownIcon className="h-5 w-5" />
-            </span>
-          </button>
+            <span className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-white/80">al mes</span>
+          </span>
+          <span className="relative flex items-center gap-2 text-base font-bold uppercase tracking-wide">
+            {submitting ? "Redirigiendo…" : "Obtener plan"}
+            <CrownIcon className="h-5 w-5" />
+          </span>
+        </button>
 
-          <div className="flex items-center justify-center gap-x-3 gap-y-0.5 flex-wrap text-center">
-            {FOOTER_TRUST.map((t) => (
-              <span key={t.label} className="flex items-center gap-1 text-[9px] uppercase tracking-wide text-zinc-500">
-                <t.icon className="h-3 w-3 text-emerald-400" />
-                {t.label}
-              </span>
-            ))}
-          </div>
+        <div className="flex items-center justify-center gap-x-3 gap-y-0.5 flex-wrap text-center">
+          {FOOTER_TRUST.map((t) => (
+            <span key={t.label} className="flex items-center gap-1 text-[9px] uppercase tracking-wide text-zinc-500">
+              <t.icon className="h-3 w-3 text-emerald-400" />
+              {t.label}
+            </span>
+          ))}
         </div>
       </div>
-    )}
+    </div>
     </>
   );
 }
