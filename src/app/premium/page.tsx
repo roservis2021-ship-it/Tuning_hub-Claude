@@ -141,15 +141,18 @@ function PremiumContent() {
         >
           <span className="pointer-events-none absolute inset-y-0 left-0 w-1/3 animate-shine bg-gradient-to-r from-transparent via-white/45 to-transparent" />
           <span className="relative flex flex-col items-start leading-none">
-            <span className="flex items-baseline gap-2">
-              <span className="text-2xl font-extrabold">11,99€</span>
-              <span className="text-sm font-semibold text-white/60 line-through">18,99€</span>
+            <span className="flex items-baseline gap-1">
+              <span className="text-[11px] font-semibold uppercase tracking-wide text-white/80">Desde</span>
+              <span className="text-xl font-extrabold">0,39€</span>
+              <span className="text-xs font-semibold text-white/80">/día</span>
             </span>
-            <span className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-white/80">al mes</span>
+            <span className="mt-0.5 text-[10px] font-semibold uppercase tracking-widest text-white/70">
+              (11,99€/mes)
+            </span>
           </span>
-          <span className="relative flex items-center gap-2 text-base font-bold uppercase tracking-wide">
+          <span className="relative flex shrink-0 items-center gap-1.5 text-sm font-bold uppercase tracking-wide">
             {submitting ? "Redirigiendo…" : "Obtener plan"}
-            <CrownIcon className="h-5 w-5" />
+            <CrownIcon className="h-4 w-4 shrink-0" />
           </span>
         </button>
 
