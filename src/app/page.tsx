@@ -56,12 +56,13 @@ export default function HomePage() {
         </p>
 
         <h1
-          className={`${display.className} animate-fade-up text-6xl uppercase leading-[0.88] tracking-tight sm:text-7xl`}
+          className={`${display.className} animate-fade-up relative isolate overflow-hidden text-6xl uppercase leading-[0.88] tracking-tight sm:text-7xl`}
           style={{ animationDelay: "90ms" }}
         >
-          <span className="text-zinc-100 [text-shadow:0_2px_18px_rgba(0,0,0,0.6)]">Tuning</span>
+          <span className="pointer-events-none absolute inset-y-0 left-0 w-1/3 animate-shine bg-gradient-to-r from-transparent via-white/45 to-transparent" />
+          <span className="relative text-zinc-100 [text-shadow:0_2px_18px_rgba(0,0,0,0.6)]">Tuning</span>
           <br />
-          <span className="animate-neon-text italic text-accent">Hub</span>
+          <span className="relative animate-neon-text italic text-accent">Hub</span>
         </h1>
 
         <p className="animate-fade-up max-w-md text-balance text-lg text-zinc-300" style={{ animationDelay: "180ms" }}>
