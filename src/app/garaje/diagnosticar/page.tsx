@@ -51,6 +51,7 @@ function DiagnosticarContent() {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [recording, setRecording] = useState(false);
   const [speechSupported, setSpeechSupported] = useState(false);
+  const [micError, setMicError] = useState<string | null>(null);
 
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<Diagnosis | null>(null);
@@ -79,22 +80,48 @@ function DiagnosticarContent() {
       return;
     }
 
+    setMicError(null);
+    const baseText = description.trim() ? description.trim() + " " : "";
+
     const recognition = new SpeechRecognition();
     recognition.lang = "es-ES";
     recognition.continuous = true;
-    recognition.interimResults = false;
+    recognition.interimResults = true;
+
     recognition.onresult = (event: any) => {
-      let transcript = "";
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        transcript += event.results[i][0].transcript;
+      let finalText = "";
+      let interimText = "";
+      for (let i = 0; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) finalText += transcript + " ";
+        else interimText += transcript;
       }
-      setDescription((prev) => (prev ? prev + " " : "") + transcript);
+      setDescription(baseText + finalText + interimText);
     };
+
+    recognition.onerror = (event: any) => {
+      setRecording(false);
+      if (event.error === "not-allowed" || event.error === "service-not-allowed") {
+        setMicError("Permiso de micrófono denegado. Actívalo en los ajustes del navegador para este sitio.");
+      } else if (event.error === "no-speech") {
+        setMicError("No se detectó voz. Acércate al micrófono e inténtalo de nuevo.");
+      } else if (event.error === "audio-capture") {
+        setMicError("No se encontró ningún micrófono en este dispositivo.");
+      } else {
+        setMicError("No se pudo dictar por voz ahora mismo. Inténtalo de nuevo.");
+      }
+    };
+
     recognition.onend = () => setRecording(false);
-    recognition.onerror = () => setRecording(false);
+
     recognitionRef.current = recognition;
-    recognition.start();
-    setRecording(true);
+    try {
+      recognition.start();
+      setRecording(true);
+    } catch {
+      setRecording(false);
+      setMicError("No se pudo iniciar el dictado por voz.");
+    }
   }
 
   async function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -190,6 +217,8 @@ function DiagnosticarContent() {
             <input type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} />
           </label>
         </div>
+
+        {micError && <p className="text-xs text-red-400">{micError}</p>}
 
         {photoPreview && (
           <div className="flex items-center gap-3">
