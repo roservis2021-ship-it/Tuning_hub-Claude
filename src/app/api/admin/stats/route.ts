@@ -67,6 +67,26 @@ export async function GET(req: Request) {
       console.error("admin/stats: fallo al leer presencia", err instanceof Error ? err.message : err);
     }
 
+    const dayKeys: string[] = [];
+    for (let i = 13; i >= 0; i--) {
+      dayKeys.push(new Date(now - i * 24 * 60 * 60 * 1000).toISOString().slice(0, 10));
+    }
+
+    let uniqueVisitorsByDay = dayKeys.map((date) => ({ date, count: 0 }));
+    try {
+      const dailyVisitsCol = collection(db, "dailyVisits");
+      const counts = await Promise.all(
+        dayKeys.map((date) => getCountFromServer(query(dailyVisitsCol, where("date", "==", date))))
+      );
+      uniqueVisitorsByDay = dayKeys.map((date, i) => ({ date, count: counts[i].data().count }));
+
+      const oldestKept = Timestamp.fromMillis(now - 35 * 24 * 60 * 60 * 1000);
+      const staleVisits = await getDocs(query(dailyVisitsCol, where("lastSeen", "<", oldestKept), limit(200)));
+      await Promise.all(staleVisits.docs.map((d) => deleteDoc(d.ref).catch(() => {})));
+    } catch (err) {
+      console.error("admin/stats: fallo al leer visitantes únicos", err instanceof Error ? err.message : err);
+    }
+
     const recentUsers = recentUsersSnap.docs.map((d) => {
       const u = d.data() as { email?: string; name?: string; premium?: boolean; createdAt?: Timestamp };
       return {
@@ -105,6 +125,7 @@ export async function GET(req: Request) {
       mrrEur: mrrCents / 100,
       recentUsers,
       signupsByDay,
+      uniqueVisitorsByDay,
     });
   } catch (err) {
     console.error("admin/stats: fallo", err instanceof Error ? err.message : err);

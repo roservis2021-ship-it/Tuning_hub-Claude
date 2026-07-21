@@ -25,9 +25,11 @@ type Stats = {
   mrrEur: number;
   recentUsers: { email: string | null; name: string | null; premium: boolean; createdAt: string | null }[];
   signupsByDay: { date: string; count: number }[];
+  uniqueVisitorsByDay: { date: string; count: number }[];
 };
 
 const ACCENT = "#e6182c";
+const VISITORS_COLOR = "#3b82f6";
 const CHART_TEXT = "#71717a";
 
 function chartDayLabel(iso: string) {
@@ -229,6 +231,38 @@ export function PanelClient() {
               </PieChart>
             </ResponsiveContainer>
           </div>
+        </div>
+      </div>
+
+      <div className="rounded-xl border border-garage-700 bg-garage-900/40 p-4">
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-zinc-400">
+          Visitantes únicos por día (14 días)
+        </h2>
+        <div className="h-52">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={stats.uniqueVisitorsByDay}>
+              <XAxis
+                dataKey="date"
+                tickFormatter={chartDayLabel}
+                tick={{ fill: CHART_TEXT, fontSize: 11 }}
+                axisLine={{ stroke: "#3f3f46" }}
+                tickLine={false}
+              />
+              <YAxis
+                allowDecimals={false}
+                tick={{ fill: CHART_TEXT, fontSize: 11 }}
+                axisLine={{ stroke: "#3f3f46" }}
+                tickLine={false}
+                width={24}
+              />
+              <Tooltip
+                labelFormatter={(v) => chartDayLabel(String(v))}
+                contentStyle={{ background: "#18181b", border: "1px solid #3f3f46", borderRadius: 8, fontSize: 12 }}
+                labelStyle={{ color: "#e4e4e7" }}
+              />
+              <Bar dataKey="count" name="Visitantes únicos" fill={VISITORS_COLOR} radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       </div>
 

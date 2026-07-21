@@ -16,9 +16,20 @@ function getSessionId(): string {
   return id;
 }
 
+function getVisitorId(): string {
+  const key = "th_visitor_id";
+  let id = localStorage.getItem(key);
+  if (!id) {
+    id = crypto.randomUUID();
+    localStorage.setItem(key, id);
+  }
+  return id;
+}
+
 export function PresenceBeacon() {
   useEffect(() => {
     const sessionId = getSessionId();
+    const visitorId = getVisitorId();
 
     function beat() {
       setDoc(doc(db, "presence", sessionId), { lastSeen: serverTimestamp() }).catch(() => {});
@@ -26,6 +37,12 @@ export function PresenceBeacon() {
 
     beat();
     const id = setInterval(beat, HEARTBEAT_MS);
+
+    const today = new Date().toISOString().slice(0, 10);
+    setDoc(doc(db, "dailyVisits", `${today}_${visitorId}`), { date: today, visitorId, lastSeen: serverTimestamp() }).catch(
+      () => {}
+    );
+
     return () => clearInterval(id);
   }, []);
 

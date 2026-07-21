@@ -50,5 +50,12 @@ service cloud.firestore {
       allow write: if true;
       allow read, delete: if isServerAccount();
     }
+
+    // Marca de "visitante único del día" (un doc por día+visitante, anónimo,
+    // sin datos personales). Escritura pública; lectura solo desde el panel.
+    match /dailyVisits/{docId} {
+      allow write: if true;
+      allow read, delete: if isServerAccount();
+    }
   }
 }
