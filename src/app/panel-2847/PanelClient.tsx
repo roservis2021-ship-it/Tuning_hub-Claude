@@ -34,36 +34,46 @@ function chartDayLabel(iso: string) {
   return `${d}/${m}`;
 }
 
+const REFRESH_INTERVAL_MS = 30_000;
+
 export function PanelClient() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [needsAuth, setNeedsAuth] = useState(false);
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-  async function loadStats() {
-    setLoading(true);
+  async function loadStats(opts: { silent?: boolean } = {}) {
+    if (!opts.silent) setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/admin/stats");
+      const res = await fetch("/api/admin/stats", { cache: "no-store" });
       if (res.status === 401) {
         setNeedsAuth(true);
         return;
       }
       if (!res.ok) {
-        setError("No se pudieron cargar las métricas");
+        if (!opts.silent) setError("No se pudieron cargar las métricas");
         return;
       }
       setStats(await res.json());
       setNeedsAuth(false);
+      setLastUpdated(new Date());
     } finally {
-      setLoading(false);
+      if (!opts.silent) setLoading(false);
     }
   }
 
   useEffect(() => {
     loadStats();
   }, []);
+
+  useEffect(() => {
+    if (needsAuth || !stats) return;
+    const id = setInterval(() => loadStats({ silent: true }), REFRESH_INTERVAL_MS);
+    return () => clearInterval(id);
+  }, [needsAuth, stats]);
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -129,7 +139,13 @@ export function PanelClient() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-3xl flex-col gap-6 px-6 py-10 text-zinc-100">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Panel interno — Tuning Hub</h1>
+        <div>
+          <h1 className="text-2xl font-bold">Panel interno — Tuning Hub</h1>
+          <p className="mt-1 flex items-center gap-1.5 text-[11px] text-zinc-500">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+            En vivo · actualizado {lastUpdated?.toLocaleTimeString("es-ES") ?? "—"}
+          </p>
+        </div>
         <button onClick={handleLogout} className="text-xs text-zinc-500 hover:text-zinc-300">
           Cerrar sesión
         </button>
