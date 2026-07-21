@@ -11,8 +11,8 @@ export const CAR_CATALOG: Record<string, ModelCatalog> = {
   SEAT: {
     Ibiza: [
       { code: "1", label: "1ª generación", years: "1984-1993", engines: ["1.2", "1.5", "1.7 Diésel", "System Porsche 1.5 GLX"] },
-      { code: "2", label: "2ª generación", years: "1993-2002", engines: ["1.4", "1.6", "1.8 16V GTI", "1.9 TDI", "2.0 16V Cupra"] },
-      { code: "3", label: "3ª generación", years: "2002-2008", engines: ["1.2", "1.4", "1.9 TDI", "1.9 TDI Cupra"] },
+      { code: "2", label: "2ª generación", years: "1993-2002", engines: ["1.4", "1.6", "1.8 16V GTI", "1.9 TDI", "2.0 16V Cupra", "2.0 16V Kit Car (rally)"] },
+      { code: "3", label: "3ª generación", years: "2002-2008", engines: ["1.2", "1.4", "1.9 TDI", "1.9 TDI Cupra", "1.8 20VT Cupra R 180cv (edición limitada)"] },
       { code: "4", label: "4ª generación", years: "2008-2017", engines: ["1.2 TSI", "1.4 TSI", "1.6 TDI", "2.0 TDI Cupra"] },
       { code: "5", label: "5ª generación", years: "2017-presente", engines: ["1.0 MPI", "1.0 TSI", "1.5 TSI", "1.6 TDI"] },
     ],
@@ -25,6 +25,13 @@ export const CAR_CATALOG: Record<string, ModelCatalog> = {
     Arona: [{ code: "1", label: "1ª generación", years: "2017-presente", engines: ["1.0 TSI", "1.5 TSI", "1.6 TDI"] }],
     Ateca: [{ code: "1", label: "1ª generación", years: "2016-presente", engines: ["1.0 TSI", "1.5 TSI", "2.0 TSI Cupra", "2.0 TDI"] }],
     Tarraco: [{ code: "1", label: "1ª generación", years: "2018-presente", engines: ["1.5 TSI", "2.0 TSI", "2.0 TDI"] }],
+    "600": [{ code: "1", label: "SEAT 600", years: "1957-1973", engines: ["633cc", "767cc (600 D/E)"] }],
+    "124": [{ code: "1", label: "SEAT 124", years: "1968-1980", engines: ["1200", "1600 Sport", "124 D 1.2 Diésel"] }],
+    "1430": [{ code: "1", label: "SEAT 1430", years: "1969-1975", engines: ["1438cc", "1430 1600 (rally)"] }],
+    Córdoba: [
+      { code: "1", label: "1ª generación", years: "1993-2002", engines: ["1.6", "1.8 20V", "1.9 TDI", "1.9 SDI", "WRC Evo2 (rally)"] },
+      { code: "2", label: "2ª generación", years: "2002-2009", engines: ["1.4", "1.9 TDI"] },
+    ],
   },
   Cupra: {
     Formentor: [{ code: "1", label: "1ª generación", years: "2020-presente", engines: ["1.5 TSI", "2.0 TSI", "2.0 TSI VZ5", "2.0 TDI"] }],
@@ -63,6 +70,12 @@ export const CAR_CATALOG: Record<string, ModelCatalog> = {
       { code: "B8", label: "B8", years: "2014-presente", engines: ["1.5 TSI", "2.0 TSI", "2.0 TDI", "GTE Híbrido enchufable"] },
     ],
     "T-Cross": [{ code: "1", label: "1ª generación", years: "2018-presente", engines: ["1.0 TSI", "1.5 TSI"] }],
+    Scirocco: [
+      { code: "Mk1", label: "Mk1", years: "1974-1981", engines: ["1.5", "1.6", "1.6 GTI", "1.8 GLI"] },
+      { code: "Mk2", label: "Mk2", years: "1981-1992", engines: ["1.6", "1.8", "1.8 16V Scala/GTX", "G60"] },
+      { code: "Mk3", label: "3ª generación (moderno)", years: "2008-2017", engines: ["1.4 TSI", "2.0 TSI", "2.0 TSI R", "2.0 TDI"] },
+    ],
+    Corrado: [{ code: "1", label: "1ª generación", years: "1988-1995", engines: ["1.8 16V", "G60", "VR6 2.9"] }],
   },
   Renault: {
     Clio: [
@@ -85,6 +98,10 @@ export const CAR_CATALOG: Record<string, ModelCatalog> = {
     Kadjar: [{ code: "1", label: "1ª generación", years: "2015-2022", engines: ["1.3 TCe", "1.5 dCi", "1.7 dCi"] }],
     Arkana: [{ code: "1", label: "1ª generación", years: "2021-presente", engines: ["1.3 TCe", "E-Tech Híbrido 145cv"] }],
     Austral: [{ code: "1", label: "1ª generación", years: "2022-presente", engines: ["1.3 TCe mild hybrid", "E-Tech Híbrido 200/230cv"] }],
+    "5": [
+      { code: "1", label: "Renault 5", years: "1972-1985", engines: ["1.4 Alpine", "1.4 Turbo (GT Turbo) 115cv"] },
+      { code: "2", label: "Supercinco (2ª gen)", years: "1984-1996", engines: ["GT Turbo 1.4 Turbo 120cv", "GT Turbo Phase 2 120cv"] },
+    ],
   },
   Dacia: {
     Sandero: [
@@ -100,6 +117,7 @@ export const CAR_CATALOG: Record<string, ModelCatalog> = {
   },
   Toyota: {
     Corolla: [
+      { code: "AE86", label: "Corolla GT / Levin-Trueno (AE86)", years: "1983-1987", engines: ["1.6 4A-GE 124cv"] },
       { code: "E100", label: "7ª generación", years: "1991-1997", engines: ["1.3", "1.6", "2.0 GTI"] },
       { code: "E110", label: "8ª generación", years: "1997-2002", engines: ["1.4", "1.6", "2.0 D"] },
       { code: "E120", label: "9ª generación", years: "2002-2007", engines: ["1.4", "1.6", "1.8", "2.0 D-4D"] },
@@ -118,6 +136,16 @@ export const CAR_CATALOG: Record<string, ModelCatalog> = {
     RAV4: [{ code: "5", label: "5ª generación", years: "2019-presente", engines: ["2.5 Hybrid", "2.5 Plug-in Hybrid"] }],
     "Aygo X": [{ code: "1", label: "1ª generación", years: "2022-presente", engines: ["1.0 VVT-i 72cv"] }],
     "Yaris Cross": [{ code: "1", label: "1ª generación", years: "2021-presente", engines: ["1.5 Hybrid 116/130cv"] }],
+    Celica: [
+      { code: "ST185", label: "GT-Four (ST185)", years: "1989-1993", engines: ["2.0 Turbo 3S-GTE 225cv"] },
+      { code: "ST205", label: "GT-Four (ST205)", years: "1994-1999", engines: ["2.0 Turbo 3S-GTE 239cv"] },
+      { code: "T23", label: "7ª generación", years: "1999-2006", engines: ["1.8 VVTL-i 192cv"] },
+    ],
+    Supra: [
+      { code: "A70", label: "3ª generación (A70)", years: "1986-1993", engines: ["3.0 Turbo 7M-GTE 235cv"] },
+      { code: "A80", label: "4ª generación (A80)", years: "1993-2002", engines: ["3.0 Twin Turbo 2JZ-GTE 326cv"] },
+      { code: "A90", label: "5ª generación (A90)", years: "2019-presente", engines: ["3.0 Turbo B58 340-387cv", "2.0 Turbo 258cv"] },
+    ],
   },
   Peugeot: {
     "208": [
@@ -139,6 +167,12 @@ export const CAR_CATALOG: Record<string, ModelCatalog> = {
     ],
     "5008": [{ code: "II", label: "5008 II", years: "2017-presente", engines: ["1.2 PureTech", "1.5 BlueHDi", "2.0 BlueHDi"] }],
     "508": [{ code: "II", label: "508 II", years: "2018-presente", engines: ["1.6 PureTech", "1.5 BlueHDi", "Hybrid 225/360cv"] }],
+    "205": [{ code: "1", label: "205", years: "1983-1998", engines: ["1.1", "1.4", "1.6", "GTI 1.6 105cv", "GTI 1.9 130cv", "Rallye 1.3", "T16 (Grupo B)"] }],
+    "106": [
+      { code: "1", label: "106 Fase 1", years: "1991-1996", engines: ["1.0", "1.1", "1.4", "XSi 1.4", "Rallye 1.3"] },
+      { code: "2", label: "106 Fase 2", years: "1996-2003", engines: ["1.1", "1.4", "1.6 16V GTI", "Rallye 1.6"] },
+    ],
+    "306": [{ code: "1", label: "306", years: "1993-2002", engines: ["1.4", "1.6", "1.8", "2.0 HDi", "GTI-6 2.0 16V 167cv", "Rallye 1.8/2.0", "Maxi (rally)"] }],
   },
   Citroën: {
     C3: [
@@ -154,9 +188,21 @@ export const CAR_CATALOG: Record<string, ModelCatalog> = {
     "C5 Aircross": [{ code: "1", label: "1ª generación", years: "2018-presente", engines: ["1.2 PureTech", "1.5 BlueHDi", "Hybrid 225cv"] }],
     Berlingo: [{ code: "3", label: "3ª generación", years: "2018-presente", engines: ["1.2 PureTech", "1.5 BlueHDi", "Eléctrico ë-Berlingo"] }],
     "C3 Aircross": [{ code: "1", label: "1ª generación", years: "2017-presente", engines: ["1.2 PureTech", "1.5 BlueHDi"] }],
+    Saxo: [
+      { code: "1", label: "Saxo Fase 1", years: "1996-1999", engines: ["1.0", "1.1", "1.4", "1.6", "VTS 1.6 16V 118cv"] },
+      { code: "2", label: "Saxo Fase 2", years: "1999-2003", engines: ["1.1", "1.4", "1.6", "VTS 1.6 16V 118cv"] },
+    ],
+    AX: [{ code: "1", label: "AX", years: "1986-1998", engines: ["1.0", "1.1", "1.4", "GT 1.4 95cv", "GTI 1.4 100cv", "Sport 1.4"] }],
+    Xsara: [
+      { code: "1", label: "Xsara", years: "1997-2000", engines: ["1.4", "1.6", "1.8", "1.9 TD", "VTS 2.0 16V 167cv"] },
+      { code: "2", label: "Xsara (facelift)", years: "2000-2004", engines: ["1.4", "1.6", "1.9 TD", "VTS 2.0 16V", "Kit Car / WRC (rally)"] },
+    ],
+    C2: [{ code: "1", label: "C2", years: "2003-2009", engines: ["1.1", "1.4", "1.6 16V VTS", "1.6 VTR", "VTS Grand Turismo 125cv"] }],
   },
   Opel: {
     Corsa: [
+      { code: "A", label: "1ª generación (A)", years: "1982-1993", engines: ["1.0", "1.2", "1.3", "GSI 1.6i 100cv"] },
+      { code: "B", label: "2ª generación (B)", years: "1993-2000", engines: ["1.0", "1.2", "1.4", "1.6", "GSI 16V 1.6 106cv"] },
       { code: "C", label: "3ª generación (C)", years: "2000-2006", engines: ["1.0", "1.2", "1.7 CDTI", "1.6 OPC"] },
       { code: "D", label: "4ª generación (D)", years: "2006-2014", engines: ["1.0", "1.2", "1.3 CDTI", "1.6 OPC"] },
       { code: "E", label: "5ª generación (E)", years: "2014-2019", engines: ["1.2", "1.4", "1.4 Turbo", "1.3 CDTI"] },
@@ -172,6 +218,11 @@ export const CAR_CATALOG: Record<string, ModelCatalog> = {
     Mokka: [{ code: "2", label: "2ª generación", years: "2020-presente", engines: ["1.2 Turbo", "1.5 Diésel", "Eléctrico e-Mokka"] }],
     Crossland: [{ code: "1", label: "1ª generación", years: "2017-presente", engines: ["1.2", "1.2 Turbo", "1.5 Diésel"] }],
     Grandland: [{ code: "1", label: "1ª generación", years: "2017-presente", engines: ["1.2 Turbo", "1.5 Diésel", "Hybrid", "Hybrid4"] }],
+    Kadett: [
+      { code: "D", label: "Kadett D", years: "1979-1984", engines: ["1.2", "1.3", "1.6", "GTE 1.6 iE 115cv"] },
+      { code: "E", label: "Kadett E", years: "1984-1991", engines: ["1.3", "1.6", "GSI 8V 1.8", "GSI 16V 2.0 156cv"] },
+    ],
+    Manta: [{ code: "B", label: "Manta B", years: "1975-1988", engines: ["1.6", "1.8", "2.0", "400 Grupo B 2.4 16V (rally)"] }],
   },
   Hyundai: {
     Tucson: [
@@ -214,6 +265,7 @@ export const CAR_CATALOG: Record<string, ModelCatalog> = {
   },
   Ford: {
     Fiesta: [
+      { code: "Mk3", label: "Mk3 (XR2i/RS Turbo)", years: "1989-1995", engines: ["1.1", "1.4", "1.8D", "XR2i 1.6i 105cv", "RS Turbo 1.6T 133cv"] },
       { code: "Mk5", label: "Mk5", years: "1995-2002", engines: ["1.25", "1.4", "1.8 D"] },
       { code: "Mk6", label: "Mk6", years: "2002-2008", engines: ["1.25", "1.4", "1.6 TDCi", "ST 2.0"] },
       { code: "Mk7", label: "Mk7", years: "2008-2017", engines: ["1.25", "1.4", "1.6 TDCi", "1.0 EcoBoost", "ST 1.6"] },
@@ -227,6 +279,11 @@ export const CAR_CATALOG: Record<string, ModelCatalog> = {
     ],
     Puma: [{ code: "1", label: "1ª generación", years: "2019-presente", engines: ["1.0 EcoBoost", "1.0 EcoBoost Híbrido", "ST 1.5 EcoBoost"] }],
     Kuga: [{ code: "3", label: "3ª generación", years: "2019-presente", engines: ["1.5 EcoBoost", "2.0 EcoBlue", "Hybrid", "Plug-in Hybrid"] }],
+    Escort: [
+      { code: "Mk3/Mk4", label: "Mk3/Mk4", years: "1980-1990", engines: ["1.3", "1.6", "XR3i 1.6i 105cv", "RS Turbo 1.6T 132cv", "RS1600i"] },
+      { code: "Mk5/Mk6", label: "Mk5/Mk6", years: "1990-2000", engines: ["1.4", "1.6", "1.8", "RS2000 2.0 16V 150cv", "RS Cosworth 2.0 Turbo 227cv"] },
+    ],
+    Sierra: [{ code: "1", label: "Sierra", years: "1982-1993", engines: ["1.6", "1.8", "2.0", "XR4i 2.8 V6", "Cosworth 2.0 Turbo 204cv", "Sapphire Cosworth 4x4 220cv"] }],
   },
   Nissan: {
     Qashqai: [
@@ -247,6 +304,14 @@ export const CAR_CATALOG: Record<string, ModelCatalog> = {
       { code: "T32", label: "3ª generación (T32)", years: "2013-2022", engines: ["1.6 dCi", "1.7 dCi", "2.0 dCi"] },
       { code: "T33", label: "4ª generación (T33)", years: "2022-presente", engines: ["e-Power", "Mild Hybrid"] },
     ],
+    "Skyline GT-R": [
+      { code: "R32", label: "R32", years: "1989-1994", engines: ["2.6 Turbo RB26DETT 280cv"] },
+      { code: "R33", label: "R33", years: "1995-1998", engines: ["2.6 Turbo RB26DETT 280cv"] },
+      { code: "R34", label: "R34", years: "1999-2002", engines: ["2.6 Turbo RB26DETT 280cv", "V-Spec II Nür"] },
+      { code: "R35", label: "GT-R (R35)", years: "2007-presente", engines: ["3.8 V6 Biturbo VR38DETT 480-600cv"] },
+    ],
+    "Silvia / 200SX": [{ code: "S13-S15", label: "S13-S15", years: "1988-2002", engines: ["SR20DET 2.0 Turbo 200-250cv"] }],
+    "350Z": [{ code: "1", label: "1ª generación", years: "2002-2009", engines: ["3.5 V6 VQ35DE 280cv"] }],
   },
   Fiat: {
     "500": [
@@ -260,6 +325,7 @@ export const CAR_CATALOG: Record<string, ModelCatalog> = {
     ],
     Tipo: [{ code: "1", label: "1ª generación", years: "2015-presente", engines: ["1.0 Turbo", "1.4", "1.6 Multijet"] }],
     "500X": [{ code: "1", label: "1ª generación", years: "2014-presente", engines: ["1.0 Turbo", "1.3 Turbo", "1.6 Multijet"] }],
+    Uno: [{ code: "1", label: "Uno", years: "1983-1995", engines: ["1.0", "1.3", "1.4", "Turbo i.e. 1.3 118cv", "Turbo MPI 1.4 122cv"] }],
   },
   Skoda: {
     Octavia: [
@@ -298,6 +364,10 @@ export const CAR_CATALOG: Record<string, ModelCatalog> = {
     ],
     X3: [{ code: "G01", label: "G01", years: "2017-presente", engines: ["sDrive20i", "xDrive20d", "xDrive25d", "xDrive30d", "M40i", "M40d"] }],
     "Serie 2": [{ code: "F44/F22", label: "1ª generación", years: "2014-presente", engines: ["218i", "220i", "218d", "220d", "225d"] }],
+    M2: [
+      { code: "F87", label: "1ª generación (F87)", years: "2016-2021", engines: ["3.0 Turbo M2 370cv", "M2 Competition 410cv", "M2 CS 450cv"] },
+      { code: "G87", label: "2ª generación (G87)", years: "2023-presente", engines: ["3.0 Turbo M2 460cv"] },
+    ],
   },
   "Mercedes-Benz": {
     "Clase A": [
@@ -319,6 +389,7 @@ export const CAR_CATALOG: Record<string, ModelCatalog> = {
       { code: "X254", label: "X254", years: "2022-presente", engines: ["GLC200", "GLC220d", "GLC300"] },
     ],
     "Clase B": [{ code: "W247", label: "W247", years: "2011-presente", engines: ["B180", "B200", "B200d"] }],
+    "190E": [{ code: "W201", label: "W201", years: "1982-1993", engines: ["190E 2.0", "190E 2.3-16 (Cosworth) 185cv", "190E 2.5-16 Evo II 235cv"] }],
   },
   Audi: {
     A3: [
@@ -338,6 +409,12 @@ export const CAR_CATALOG: Record<string, ModelCatalog> = {
     ],
     Q5: [{ code: "FY", label: "FY", years: "2016-presente", engines: ["40 TDI", "45 TFSI", "55 TFSI e"] }],
     A1: [{ code: "GB", label: "GB", years: "2018-presente", engines: ["25 TFSI", "30 TFSI", "35 TFSI"] }],
+    Quattro: [{ code: "1", label: "Quattro / Sport Quattro", years: "1980-1991", engines: ["2.1 Turbo 200cv", "2.2 20V Turbo 220cv", "Sport Quattro 2.1 20V 306cv"] }],
+    TT: [
+      { code: "8N", label: "1ª generación (8N)", years: "1998-2006", engines: ["1.8T 180/225cv", "3.2 V6 250cv", "TT quattro Sport 240cv"] },
+      { code: "8J", label: "2ª generación (8J)", years: "2006-2014", engines: ["2.0 TFSI 200cv", "TTS 2.0 TFSI 272cv", "TT RS 2.5 TFSI 340cv"] },
+      { code: "8S", label: "3ª generación (8S)", years: "2014-2023", engines: ["2.0 TFSI 230cv", "TTS 2.0 TFSI 310cv", "TT RS 2.5 TFSI 400cv"] },
+    ],
   },
   Volvo: {
     XC40: [{ code: "1", label: "1ª generación", years: "2017-presente", engines: ["T3", "T4", "B4 Mild Hybrid", "Recharge Eléctrico"] }],
@@ -376,6 +453,10 @@ export const CAR_CATALOG: Record<string, ModelCatalog> = {
       { code: "6", label: "6ª generación", years: "2023-presente", engines: ["Hybrid", "Plug-in Hybrid"] },
     ],
     Jazz: [{ code: "4", label: "4ª generación", years: "2020-presente", engines: ["e:HEV Hybrid 109cv"] }],
+    Integra: [
+      { code: "DC2", label: "Type R (DC2)", years: "1995-2001", engines: ["1.8 VTEC B18C 190cv"] },
+      { code: "DC5", label: "Type R (DC5)", years: "2001-2006", engines: ["2.0 VTEC K20A 220cv"] },
+    ],
   },
   MINI: {
     Cooper: [
@@ -404,6 +485,37 @@ export const CAR_CATALOG: Record<string, ModelCatalog> = {
     ZS: [{ code: "1", label: "1ª generación", years: "2017-presente", engines: ["1.0 Turbo", "1.5", "Eléctrico ZS EV"] }],
     MG4: [{ code: "1", label: "1ª generación", years: "2022-presente", engines: ["Eléctrico 51kWh", "Eléctrico 64kWh", "Eléctrico XPower"] }],
     HS: [{ code: "1", label: "1ª generación", years: "2019-presente", engines: ["1.5 Turbo", "Plug-in Hybrid"] }],
+  },
+  Mitsubishi: {
+    "Lancer Evo": [
+      { code: "Evo IV-VI", label: "Evo IV-VI", years: "1996-2001", engines: ["2.0 Turbo 4G63 280cv"] },
+      { code: "Evo VII-IX", label: "Evo VII-IX", years: "2001-2007", engines: ["2.0 Turbo 4G63 280-306cv"] },
+      { code: "Evo X", label: "Evo X", years: "2007-2016", engines: ["2.0 Turbo 4B11 295-360cv"] },
+    ],
+    Eclipse: [{ code: "2G", label: "2ª generación", years: "1994-1999", engines: ["2.0 Turbo 4G63 210cv (GSX)"] }],
+  },
+  Subaru: {
+    "Impreza WRX STI": [
+      { code: "GC8", label: "GC8", years: "1992-2000", engines: ["2.0 Turbo EJ20 280cv"] },
+      { code: "GD/GG", label: "GD/GG", years: "2000-2007", engines: ["2.0 Turbo EJ20 265-280cv"] },
+      { code: "GR/GV", label: "GR/GV", years: "2007-2014", engines: ["2.5 Turbo EJ25 300cv"] },
+      { code: "VA", label: "VA", years: "2014-2021", engines: ["2.5 Turbo FA20 300-341cv"] },
+    ],
+    BRZ: [{ code: "1", label: "1ª generación", years: "2012-2021", engines: ["2.0 Boxer FA20 200cv"] }],
+  },
+  Lancia: {
+    Delta: [{ code: "1", label: "Delta HF Integrale", years: "1986-1994", engines: ["2.0 Turbo 16V 200-215cv", "Evoluzione 210-215cv"] }],
+  },
+  "Alfa Romeo": {
+    "155": [{ code: "1", label: "155", years: "1992-1998", engines: ["2.0 T.Spark", "Q4 2.0 Turbo 16V 190cv", "GTA (DTM/turismo)"] }],
+    "156": [{ code: "1", label: "156", years: "1997-2005", engines: ["1.8", "2.0 T.Spark", "GTA 3.2 V6 250cv"] }],
+    Giulietta: [{ code: "1", label: "1ª generación", years: "2010-2020", engines: ["1.4 Turbo", "1.75 Turbo QV 240cv"] }],
+  },
+  Talbot: {
+    Samba: [{ code: "1", label: "Samba Rallye (fabricado en Villaverde, Madrid)", years: "1982-1986", engines: ["1.3 Rallye 80cv", "1.4 Rallye 2 (Grupo B)"] }],
+  },
+  Abarth: {
+    "500/595": [{ code: "1", label: "500/595", years: "2008-presente", engines: ["1.4 Turbo T-Jet 135cv", "595 Turismo 145cv", "595 Competizione 180cv", "695 165cv"] }],
   },
 };
 
