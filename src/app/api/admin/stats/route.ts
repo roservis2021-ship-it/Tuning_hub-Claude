@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { collection, getCountFromServer, getDocs, limit, orderBy, query, Timestamp, where } from "firebase/firestore";
+import { collection, deleteDoc, getCountFromServer, getDocs, limit, orderBy, query, Timestamp, where } from "firebase/firestore";
 import { db } from "@/lib/firebase-client";
 import { asServerAccount } from "@/lib/firebase-server-auth";
 import { getStripe } from "@/lib/stripe";
@@ -52,6 +52,21 @@ export async function GET(req: Request) {
     }
     const signupsByDay = Array.from(dayBuckets.entries()).map(([date, count]) => ({ date, count }));
 
+    let onlineNow = 0;
+    try {
+      const onlineSince = Timestamp.fromMillis(now - 45_000);
+      const staleSince = Timestamp.fromMillis(now - 60 * 60 * 1000);
+      const presenceCol = collection(db, "presence");
+      const [onlineNowSnap, stalePresenceSnap] = await Promise.all([
+        getCountFromServer(query(presenceCol, where("lastSeen", ">=", onlineSince))),
+        getDocs(query(presenceCol, where("lastSeen", "<", staleSince), limit(200))),
+      ]);
+      onlineNow = onlineNowSnap.data().count;
+      await Promise.all(stalePresenceSnap.docs.map((d) => deleteDoc(d.ref).catch(() => {})));
+    } catch (err) {
+      console.error("admin/stats: fallo al leer presencia", err instanceof Error ? err.message : err);
+    }
+
     const recentUsers = recentUsersSnap.docs.map((d) => {
       const u = d.data() as { email?: string; name?: string; premium?: boolean; createdAt?: Timestamp };
       return {
@@ -79,6 +94,7 @@ export async function GET(req: Request) {
     }
 
     return NextResponse.json({
+      onlineNow,
       totalUsers: totalUsersSnap.data().count,
       premiumUsers: premiumUsersSnap.data().count,
       newUsers7d: newUsers7dSnap.data().count,

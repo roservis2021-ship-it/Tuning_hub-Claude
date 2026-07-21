@@ -42,5 +42,13 @@ service cloud.firestore {
     match /maintenanceGuideCache/{hash} {
       allow read, write: if true;
     }
+
+    // Latidos de presencia (visitantes activos en la web). Escritura pública
+    // (anónima, sin datos personales, solo una marca de tiempo); lectura y
+    // limpieza solo por la cuenta de servidor (panel interno).
+    match /presence/{sessionId} {
+      allow write: if true;
+      allow read, delete: if isServerAccount();
+    }
   }
 }

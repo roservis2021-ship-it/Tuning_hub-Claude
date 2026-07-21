@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
+import { PresenceBeacon } from "@/components/PresenceBeacon";
 
 export const metadata: Metadata = {
   title: "Tuning Hub",
@@ -23,6 +24,7 @@ export default function RootLayout({
       <body>
         <AuthProvider>{children}</AuthProvider>
         <Analytics />
+        <PresenceBeacon />
       </body>
     </html>
   );

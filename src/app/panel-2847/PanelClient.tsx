@@ -14,6 +14,7 @@ import {
 } from "recharts";
 
 type Stats = {
+  onlineNow: number;
   totalUsers: number;
   premiumUsers: number;
   newUsers7d: number;
@@ -149,6 +150,17 @@ export function PanelClient() {
         <button onClick={handleLogout} className="text-xs text-zinc-500 hover:text-zinc-300">
           Cerrar sesión
         </button>
+      </div>
+
+      <div className="flex items-center gap-3 rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-4">
+        <span className="relative flex h-3 w-3">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+          <span className="relative inline-flex h-3 w-3 rounded-full bg-emerald-500" />
+        </span>
+        <div>
+          <p className="text-2xl font-bold text-emerald-400">{stats.onlineNow}</p>
+          <p className="text-xs uppercase tracking-wide text-zinc-400">Navegando ahora mismo</p>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
