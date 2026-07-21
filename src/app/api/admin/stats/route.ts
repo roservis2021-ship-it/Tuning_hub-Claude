@@ -16,19 +16,41 @@ export async function GET(req: Request) {
     const now = Date.now();
     const sevenDaysAgo = Timestamp.fromMillis(now - 7 * 24 * 60 * 60 * 1000);
     const thirtyDaysAgo = Timestamp.fromMillis(now - 30 * 24 * 60 * 60 * 1000);
+    const fourteenDaysAgo = Timestamp.fromMillis(now - 14 * 24 * 60 * 60 * 1000);
 
     const usersCol = collection(db, "users");
     const vehiclesCol = collection(db, "vehicles");
 
-    const [totalUsersSnap, premiumUsersSnap, newUsers7dSnap, newUsers30dSnap, totalVehiclesSnap, recentUsersSnap] =
-      await Promise.all([
-        getCountFromServer(usersCol),
-        getCountFromServer(query(usersCol, where("premium", "==", true))),
-        getCountFromServer(query(usersCol, where("createdAt", ">=", sevenDaysAgo))),
-        getCountFromServer(query(usersCol, where("createdAt", ">=", thirtyDaysAgo))),
-        getCountFromServer(vehiclesCol),
-        getDocs(query(usersCol, orderBy("createdAt", "desc"), limit(10))),
-      ]);
+    const [
+      totalUsersSnap,
+      premiumUsersSnap,
+      newUsers7dSnap,
+      newUsers30dSnap,
+      totalVehiclesSnap,
+      recentUsersSnap,
+      last14dUsersSnap,
+    ] = await Promise.all([
+      getCountFromServer(usersCol),
+      getCountFromServer(query(usersCol, where("premium", "==", true))),
+      getCountFromServer(query(usersCol, where("createdAt", ">=", sevenDaysAgo))),
+      getCountFromServer(query(usersCol, where("createdAt", ">=", thirtyDaysAgo))),
+      getCountFromServer(vehiclesCol),
+      getDocs(query(usersCol, orderBy("createdAt", "desc"), limit(10))),
+      getDocs(query(usersCol, where("createdAt", ">=", fourteenDaysAgo), orderBy("createdAt", "asc"))),
+    ]);
+
+    const dayBuckets = new Map<string, number>();
+    for (let i = 13; i >= 0; i--) {
+      const d = new Date(now - i * 24 * 60 * 60 * 1000);
+      dayBuckets.set(d.toISOString().slice(0, 10), 0);
+    }
+    for (const d of last14dUsersSnap.docs) {
+      const createdAt = (d.data() as { createdAt?: Timestamp }).createdAt;
+      if (!createdAt) continue;
+      const key = createdAt.toDate().toISOString().slice(0, 10);
+      if (dayBuckets.has(key)) dayBuckets.set(key, (dayBuckets.get(key) ?? 0) + 1);
+    }
+    const signupsByDay = Array.from(dayBuckets.entries()).map(([date, count]) => ({ date, count }));
 
     const recentUsers = recentUsersSnap.docs.map((d) => {
       const u = d.data() as { email?: string; name?: string; premium?: boolean; createdAt?: Timestamp };
@@ -66,6 +88,7 @@ export async function GET(req: Request) {
       cancelingSubscriptions,
       mrrEur: mrrCents / 100,
       recentUsers,
+      signupsByDay,
     });
   } catch (err) {
     console.error("admin/stats: fallo", err instanceof Error ? err.message : err);

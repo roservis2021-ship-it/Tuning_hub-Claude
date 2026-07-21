@@ -1,6 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import {
+  Bar,
+  BarChart,
+  Cell,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 type Stats = {
   totalUsers: number;
@@ -12,7 +23,16 @@ type Stats = {
   cancelingSubscriptions: number;
   mrrEur: number;
   recentUsers: { email: string | null; name: string | null; premium: boolean; createdAt: string | null }[];
+  signupsByDay: { date: string; count: number }[];
 };
+
+const ACCENT = "#e6182c";
+const CHART_TEXT = "#71717a";
+
+function chartDayLabel(iso: string) {
+  const [, m, d] = iso.split("-");
+  return `${d}/${m}`;
+}
 
 export function PanelClient() {
   const [stats, setStats] = useState<Stats | null>(null);
@@ -125,6 +145,63 @@ export function PanelClient() {
         <Metric label="Suscripciones activas" value={stats.activeSubscriptions} />
         <Metric label="Cancelando" value={stats.cancelingSubscriptions} />
         <Metric label="MRR" value={`${stats.mrrEur.toFixed(2)} €`} />
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="rounded-xl border border-garage-700 bg-garage-900/40 p-4">
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-zinc-400">Altas por día (14 días)</h2>
+          <div className="h-52">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={stats.signupsByDay}>
+                <XAxis
+                  dataKey="date"
+                  tickFormatter={chartDayLabel}
+                  tick={{ fill: CHART_TEXT, fontSize: 11 }}
+                  axisLine={{ stroke: "#3f3f46" }}
+                  tickLine={false}
+                />
+                <YAxis
+                  allowDecimals={false}
+                  tick={{ fill: CHART_TEXT, fontSize: 11 }}
+                  axisLine={{ stroke: "#3f3f46" }}
+                  tickLine={false}
+                  width={24}
+                />
+                <Tooltip
+                  labelFormatter={(v) => chartDayLabel(String(v))}
+                  contentStyle={{ background: "#18181b", border: "1px solid #3f3f46", borderRadius: 8, fontSize: 12 }}
+                  labelStyle={{ color: "#e4e4e7" }}
+                />
+                <Bar dataKey="count" name="Altas" fill={ACCENT} radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-garage-700 bg-garage-900/40 p-4">
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-zinc-400">Free vs Premium</h2>
+          <div className="h-52">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={[
+                    { name: "Premium", value: stats.premiumUsers },
+                    { name: "Free", value: Math.max(stats.totalUsers - stats.premiumUsers, 0) },
+                  ]}
+                  dataKey="value"
+                  nameKey="name"
+                  innerRadius={45}
+                  outerRadius={75}
+                  paddingAngle={2}
+                >
+                  <Cell fill={ACCENT} />
+                  <Cell fill="#3f3f46" />
+                </Pie>
+                <Tooltip contentStyle={{ background: "#18181b", border: "1px solid #3f3f46", borderRadius: 8, fontSize: 12 }} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
       </div>
 
       <div>
