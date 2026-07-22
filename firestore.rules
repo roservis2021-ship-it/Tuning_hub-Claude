@@ -57,5 +57,13 @@ service cloud.firestore {
       allow write: if true;
       allow read, delete: if isServerAccount();
     }
+
+    // Registro de páginas vistas (pantalla + país/ciudad aproximado por IP,
+    // sin datos personales). Solo creación pública (registro de solo-append);
+    // lectura y limpieza solo desde el panel.
+    match /pageViews/{docId} {
+      allow create: if true;
+      allow read, delete: if isServerAccount();
+    }
   }
 }

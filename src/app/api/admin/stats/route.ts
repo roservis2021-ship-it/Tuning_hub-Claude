@@ -87,6 +87,57 @@ export async function GET(req: Request) {
       console.error("admin/stats: fallo al leer visitantes únicos", err instanceof Error ? err.message : err);
     }
 
+    let topScreens: { path: string; count: number }[] = [];
+    let topLocations: { label: string; count: number }[] = [];
+    let hourlyVisits: { hour: string; count: number }[] = [];
+    try {
+      const pageViewsCol = collection(db, "pageViews");
+      const pageViewsSnap = await getDocs(
+        query(pageViewsCol, where("createdAt", ">=", sevenDaysAgo), orderBy("createdAt", "desc"), limit(1500))
+      );
+
+      const screenCounts = new Map<string, number>();
+      const locationCounts = new Map<string, number>();
+      const hourBuckets = new Map<string, number>();
+      const oneDayAgoMillis = now - 24 * 60 * 60 * 1000;
+      for (let i = 23; i >= 0; i--) {
+        const d = new Date(now - i * 60 * 60 * 1000);
+        hourBuckets.set(`${String(d.getHours()).padStart(2, "0")}:00`, 0);
+      }
+
+      for (const d of pageViewsSnap.docs) {
+        const data = d.data() as { path?: string; country?: string | null; city?: string | null; createdAt?: Timestamp };
+        if (data.path) screenCounts.set(data.path, (screenCounts.get(data.path) ?? 0) + 1);
+
+        const locationLabel = data.city && data.country ? `${data.city}, ${data.country}` : data.country || null;
+        if (locationLabel) locationCounts.set(locationLabel, (locationCounts.get(locationLabel) ?? 0) + 1);
+
+        const createdAtMs = data.createdAt?.toMillis?.();
+        if (createdAtMs && createdAtMs >= oneDayAgoMillis) {
+          const key = `${String(new Date(createdAtMs).getHours()).padStart(2, "0")}:00`;
+          if (hourBuckets.has(key)) hourBuckets.set(key, (hourBuckets.get(key) ?? 0) + 1);
+        }
+      }
+
+      topScreens = Array.from(screenCounts.entries())
+        .map(([path, count]) => ({ path, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 8);
+      topLocations = Array.from(locationCounts.entries())
+        .map(([label, count]) => ({ label, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 8);
+      hourlyVisits = Array.from(hourBuckets.entries()).map(([hour, count]) => ({ hour, count }));
+
+      const oldestKeptPageViews = Timestamp.fromMillis(now - 30 * 24 * 60 * 60 * 1000);
+      const stalePageViews = await getDocs(
+        query(pageViewsCol, where("createdAt", "<", oldestKeptPageViews), limit(200))
+      );
+      await Promise.all(stalePageViews.docs.map((d) => deleteDoc(d.ref).catch(() => {})));
+    } catch (err) {
+      console.error("admin/stats: fallo al leer páginas vistas", err instanceof Error ? err.message : err);
+    }
+
     const recentUsers = recentUsersSnap.docs.map((d) => {
       const u = d.data() as { email?: string; name?: string; premium?: boolean; createdAt?: Timestamp };
       return {
@@ -126,6 +177,9 @@ export async function GET(req: Request) {
       recentUsers,
       signupsByDay,
       uniqueVisitorsByDay,
+      topScreens,
+      topLocations,
+      hourlyVisits,
     });
   } catch (err) {
     console.error("admin/stats: fallo", err instanceof Error ? err.message : err);

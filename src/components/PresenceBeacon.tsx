@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase-client";
+import { isInternalVisitor } from "@/lib/internal-traffic";
 
 const HEARTBEAT_MS = 20_000;
 
@@ -28,6 +29,8 @@ function getVisitorId(): string {
 
 export function PresenceBeacon() {
   useEffect(() => {
+    if (isInternalVisitor()) return;
+
     const sessionId = getSessionId();
     const visitorId = getVisitorId();
 

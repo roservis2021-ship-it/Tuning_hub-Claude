@@ -26,6 +26,9 @@ type Stats = {
   recentUsers: { email: string | null; name: string | null; premium: boolean; createdAt: string | null }[];
   signupsByDay: { date: string; count: number }[];
   uniqueVisitorsByDay: { date: string; count: number }[];
+  topScreens: { path: string; count: number }[];
+  topLocations: { label: string; count: number }[];
+  hourlyVisits: { hour: string; count: number }[];
 };
 
 const ACCENT = "#e6182c";
@@ -266,6 +269,48 @@ export function PanelClient() {
         </div>
       </div>
 
+      <div className="rounded-xl border border-garage-700 bg-garage-900/40 p-4">
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-zinc-400">Visitas por hora (24h)</h2>
+        <div className="h-52">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={stats.hourlyVisits}>
+              <XAxis
+                dataKey="hour"
+                interval={3}
+                tick={{ fill: CHART_TEXT, fontSize: 11 }}
+                axisLine={{ stroke: "#3f3f46" }}
+                tickLine={false}
+              />
+              <YAxis
+                allowDecimals={false}
+                tick={{ fill: CHART_TEXT, fontSize: 11 }}
+                axisLine={{ stroke: "#3f3f46" }}
+                tickLine={false}
+                width={24}
+              />
+              <Tooltip
+                contentStyle={{ background: "#18181b", border: "1px solid #3f3f46", borderRadius: 8, fontSize: 12 }}
+                labelStyle={{ color: "#e4e4e7" }}
+              />
+              <Bar dataKey="count" name="Visitas" fill={VISITORS_COLOR} radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <RankedList
+          title="Pantallas más visitadas"
+          items={stats.topScreens.map((s) => ({ label: s.path, count: s.count }))}
+          emptyLabel="Sin datos todavía"
+        />
+        <RankedList
+          title="Ubicación de visitantes"
+          items={stats.topLocations.map((l) => ({ label: l.label, count: l.count }))}
+          emptyLabel="Sin datos todavía (o probando en local)"
+        />
+      </div>
+
       <div>
         <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-zinc-400">Últimos registros</h2>
         <div className="flex flex-col gap-2">
@@ -282,6 +327,43 @@ export function PanelClient() {
         </div>
       </div>
     </main>
+  );
+}
+
+function RankedList({
+  title,
+  items,
+  emptyLabel,
+}: {
+  title: string;
+  items: { label: string; count: number }[];
+  emptyLabel: string;
+}) {
+  const max = Math.max(1, ...items.map((i) => i.count));
+  return (
+    <div className="rounded-xl border border-garage-700 bg-garage-900/40 p-4">
+      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-zinc-400">{title}</h2>
+      {items.length === 0 ? (
+        <p className="text-sm text-zinc-500">{emptyLabel}</p>
+      ) : (
+        <div className="flex flex-col gap-2.5">
+          {items.map((item) => (
+            <div key={item.label} className="flex items-center gap-3">
+              <span className="w-28 shrink-0 truncate text-xs text-zinc-300" title={item.label}>
+                {item.label}
+              </span>
+              <div className="relative h-2 flex-1 overflow-hidden rounded-full bg-garage-800">
+                <div
+                  className="h-full rounded-full bg-accent"
+                  style={{ width: `${Math.max(4, (item.count / max) * 100)}%` }}
+                />
+              </div>
+              <span className="w-6 shrink-0 text-right text-xs font-semibold text-zinc-400">{item.count}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 
