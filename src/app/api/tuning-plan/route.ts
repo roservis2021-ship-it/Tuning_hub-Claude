@@ -22,11 +22,11 @@ const TuningPlanSchema = z.object({
     .array(
       z.object({
         title: z.string(),
-        items: z.array(z.string()).describe("EXACTAMENTE 2 o 3 ítems muy concisos, no más"),
-        note: z.string().optional().describe("Opcional, una sola frase corta"),
+        items: z.array(z.string()).describe("ENTRE 3 y 4 ítems concisos"),
+        note: z.string().describe("Una frase corta explicando por qué importa esta etapa o qué lograr con ella"),
       })
     )
-    .describe("MÁXIMO 2 etapas (versión gratuita limitada). No incluyas más de 2 aunque el coche dé para más"),
+    .describe("MÁXIMO 3 etapas (versión gratuita limitada). No incluyas más de 3 aunque el coche dé para más"),
   risks: z.array(z.string()).describe("MÁXIMO 3 riesgos, cada uno en una frase corta"),
   maintenance: z.array(z.string()).describe("MÁXIMO 3 puntos de mantenimiento, cada uno en una frase corta"),
 });
@@ -69,7 +69,7 @@ function buildCacheKey(params: {
   const mileageBucket = Math.floor(params.mileage / MILEAGE_BUCKET_SIZE) * MILEAGE_BUCKET_SIZE;
   const objectivesKey = [...(params.objectives ?? [])].sort().join(",");
   const raw = [
-    "v2-free-limited",
+    "v3-free-limited-plus",
     params.brand,
     params.model,
     params.generation,
@@ -127,7 +127,7 @@ Dado un vehículo concreto y el uso que le va a dar su propietario, genera un an
    - distribucion: "Cadena — revisar cada 150.000 km" (no un párrafo justificando por qué)
    Si se indica un código de motor concreto en los datos del vehículo, úsalo como dato cierto para potencia y par (no lo trates como estimación). Si no se indica, da potencia y par orientativos marcados como "estimado". Determina también la aspiración (atmosférico/turbo/híbrido/eléctrico), la centralita (ECU) si la conoces (si no, "No disponible"), el tipo de distribución (correa/cadena) con su intervalo habitual, y la tracción (delantera/trasera/total, indicando FWD/RWD/AWD o 4x4 si aplica).
 
-2. Plan de modificaciones (VERSIÓN GRATUITA — LIMITADA A PROPÓSITO): muestra SOLO las 2 primeras etapas del plan, con 2-3 ítems concisos cada una. Es una vista previa gratuita: debe ser útil y despertar interés, pero incompleta. En la última etapa incluye una 'note' breve que insinúe que hay más etapas y detalle en el plan completo (Premium), sin sonar a anuncio agresivo (ej: "Las siguientes etapas (frenos, suspensión, ajuste final) se detallan en el plan completo"). Si el kilometraje es alto, la etapa 0/1 debe ser de puesta a punto antes de tocar potencia. No recomiendes modificaciones agresivas en motores con mucho kilometraje sin antes recomendar una revisión.
+2. Plan de modificaciones (VERSIÓN GRATUITA — LIMITADA A PROPÓSITO): muestra SOLO las 3 primeras etapas del plan, con 3-4 ítems concisos cada una. Es una vista previa gratuita: debe ser útil y despertar interés, pero incompleta. Cada etapa lleva su propia 'note' explicando brevemente por qué importa esa etapa o qué se consigue con ella (no la reserves solo para la última). En la última etapa, además, insinúa que hay más etapas y detalle en el plan completo (Premium), sin sonar a anuncio agresivo (ej: "Las siguientes etapas (frenos, suspensión, ajuste final) se detallan en el plan completo"). Si el kilometraje es alto, la etapa 0/1 debe ser de puesta a punto antes de tocar potencia. No recomiendes modificaciones agresivas en motores con mucho kilometraje sin antes recomendar una revisión.
 
 3. Riesgos y mantenimiento (LIMITADO): MÁXIMO 3 riesgos y MÁXIMO 3 puntos de mantenimiento, los más importantes, cada uno en una frase corta. Riesgos reales y específicos de ESE coche (no genéricos), incluyendo lo legal en España (ITV, homologación, seguro) cuando aplique.
 

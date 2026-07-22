@@ -26,6 +26,9 @@ import {
   FuelIcon,
   OdometerIcon,
   ChartSmallIcon,
+  ShieldCheckIcon,
+  CheckCircleIcon,
+  WrenchNavIcon,
 } from "@/components/icons";
 import { computeSpecs, generateModPlan, generateRisks, generateMaintenance, type ModStage } from "@/lib/tuning-engine";
 
@@ -400,6 +403,16 @@ const LOADING_MESSAGES_TEMPLATE = (vehicle: Vehicle) => [
 
 const ESTIMATED_DURATION_MS = 30000;
 
+const STEP_ICONS = [EngineIcon, GaugeIcon, WrenchNavIcon, ChartSmallIcon, ShieldCheckIcon, CheckCircleIcon];
+const STEP_LABELS = [
+  "Analizando tu coche",
+  "Potencia y par",
+  "Historial del motor",
+  "Plan por etapas",
+  "Riesgos y mantenimiento",
+  "Recomendaciones finales",
+];
+
 function ProgressiveLoadingScreen({ vehicle }: { vehicle: Vehicle }) {
   const messages = useMemo(() => LOADING_MESSAGES_TEMPLATE(vehicle), [vehicle]);
   const [progress, setProgress] = useState(4);
@@ -417,16 +430,66 @@ function ProgressiveLoadingScreen({ vehicle }: { vehicle: Vehicle }) {
   }, [messages.length]);
 
   return (
-    <main className="flex min-h-dvh flex-col items-center justify-center gap-6 px-6 text-center">
-      <div className="h-10 w-10 animate-spin rounded-full border-2 border-garage-700 border-t-accent" />
-      <p className="min-h-[1.5rem] text-lg font-medium text-zinc-100">{messages[messageIndex]}</p>
-      <div className="h-1.5 w-full max-w-xs overflow-hidden rounded-full bg-garage-700">
+    <main className="relative flex min-h-dvh flex-col items-center justify-center gap-7 overflow-hidden px-6 py-12 text-center">
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute left-1/2 top-1/2 h-[50vh] w-[50vh] -translate-x-1/2 -translate-y-1/2 animate-glow-pulse rounded-full bg-accent/20 blur-[110px]" />
+      </div>
+
+      <div className="relative flex h-28 w-28 shrink-0 items-center justify-center">
+        <div className="pointer-events-none absolute inset-0 animate-border-spin rounded-full bg-[conic-gradient(from_0deg,transparent_0deg,rgba(230,24,44,0.95)_50deg,transparent_110deg,transparent_360deg)]" />
+        <div className="absolute inset-[3px] rounded-full bg-garage-950" />
+        <span className="absolute inset-3 animate-ping rounded-full border border-accent/40" />
+        <EngineIcon className="relative h-10 w-10 text-accent" />
+      </div>
+
+      <div>
+        <p key={messageIndex} className="animate-fade-up min-h-[1.75rem] text-lg font-semibold text-zinc-100">
+          {messages[messageIndex]}
+        </p>
+        <p className="mt-1 text-xs text-zinc-500">Esto puede tardar unos segundos, estamos preparando tu plan</p>
+      </div>
+
+      <div className="flex w-full max-w-xs flex-col gap-2">
+        {STEP_LABELS.map((label, i) => {
+          const Icon = STEP_ICONS[i] ?? EngineIcon;
+          const state = i < messageIndex ? "done" : i === messageIndex ? "active" : "pending";
+          return (
+            <div
+              key={label}
+              className={`flex items-center gap-3 rounded-lg border px-3 py-2 transition-colors duration-300 ${
+                state === "active"
+                  ? "border-accent bg-accent/10"
+                  : state === "done"
+                  ? "border-emerald-500/30 bg-emerald-500/5"
+                  : "border-garage-700 bg-garage-900/20"
+              }`}
+            >
+              <span
+                className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full transition-colors duration-300 ${
+                  state === "active"
+                    ? "bg-accent text-white"
+                    : state === "done"
+                    ? "bg-emerald-500/20 text-emerald-400"
+                    : "bg-garage-800 text-zinc-600"
+                }`}
+              >
+                {state === "done" ? <CheckCircleIcon className="h-3.5 w-3.5" /> : <Icon className="h-3.5 w-3.5" />}
+              </span>
+              <span className={`text-xs font-medium ${state === "pending" ? "text-zinc-600" : "text-zinc-200"}`}>
+                {label}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="relative h-1.5 w-full max-w-xs overflow-hidden rounded-full bg-garage-700">
         <div
           className="h-full rounded-full bg-accent transition-all duration-300 ease-out"
           style={{ width: `${progress}%` }}
         />
+        <span className="pointer-events-none absolute inset-y-0 left-0 w-1/4 animate-shine bg-gradient-to-r from-transparent via-white/50 to-transparent" />
       </div>
-      <p className="text-xs text-zinc-500">Esto puede tardar unos segundos, estamos preparando tu plan</p>
     </main>
   );
 }
