@@ -292,13 +292,18 @@ function PlanContent() {
     return <ProgressiveLoadingScreen vehicle={vehicle} />;
   }
 
+  const showPromoBanner = !isPremium && !justCheckedOut;
+
   return (
     <>
-      <main className="mx-auto flex min-h-dvh max-w-2xl flex-col gap-5 px-4 py-6 pb-24">
+      <main
+        className={`mx-auto flex min-h-dvh max-w-2xl flex-col gap-5 px-4 pb-24 ${showPromoBanner ? "" : "pt-6"}`}
+        style={showPromoBanner ? { paddingTop: "calc(3.75rem + env(safe-area-inset-top))" } : undefined}
+      >
         <ScreenHeader title={`${vehicle.brand} ${vehicle.model}`} subtitle="Plan de acción tuning" backHref="/" />
 
         {isPremium && <VerifyEmailBanner />}
-        {!isPremium && !justCheckedOut && <PromoRotatingBanner vehicleId={vehicleId} />}
+        {showPromoBanner && <PromoRotatingBanner vehicleId={vehicleId} />}
 
         {justCheckedOut && !isPremium && (
           <p className="-mt-3 flex items-center justify-center gap-2 text-center text-xs text-accent">
