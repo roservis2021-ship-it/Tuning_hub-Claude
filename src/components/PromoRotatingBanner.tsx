@@ -20,9 +20,14 @@ export function PromoRotatingBanner({ vehicleId }: { vehicleId: string | null })
 
   return (
     <div className="flex items-center justify-between gap-3 rounded-xl border border-accent/40 bg-gradient-to-r from-accent/15 via-garage-900/40 to-accent/15 px-4 py-3">
-      <p key={index} className="animate-fade-up min-w-0 flex-1 truncate text-xs font-semibold text-zinc-100">
-        {MESSAGES[index]}
-      </p>
+      <div className="flex min-w-0 flex-1 items-center gap-2">
+        <span className="animate-urgent-pulse shrink-0 rounded bg-accent px-1.5 py-0.5 text-[10px] font-black text-white">
+          -44%
+        </span>
+        <p key={index} className="animate-fade-up min-w-0 truncate text-xs font-semibold text-zinc-100">
+          {MESSAGES[index]}
+        </p>
+      </div>
       <a
         href={`/premium${vehicleId ? `?vehicleId=${vehicleId}` : ""}`}
         className="relative shrink-0 overflow-hidden rounded-md bg-accent px-4 py-2 text-xs font-bold uppercase tracking-wide text-white shadow-[0_0_16px_rgba(230,24,44,0.4)]"

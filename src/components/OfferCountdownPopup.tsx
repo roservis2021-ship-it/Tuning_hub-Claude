@@ -74,18 +74,26 @@ export function OfferCountdownPopup({ onCtaClick }: { onCtaClick: () => void }) 
 
   if (phase === "banner") {
     return (
-      <div className="fixed inset-x-0 top-0 z-50 border-b border-accent/50 bg-gradient-to-r from-accent/25 via-accent/10 to-accent/25 backdrop-blur">
+      <div className="animate-slide-down-in fixed inset-x-0 top-0 z-50 border-b border-accent/50 bg-gradient-to-r from-accent/25 via-accent/10 to-accent/25 backdrop-blur">
         <div
           className="mx-auto flex max-w-md items-center justify-between gap-3 px-4 py-2"
           style={{ paddingTop: "env(safe-area-inset-top)" }}
         >
-          <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-accent">
-            <span className="h-1.5 w-1.5 shrink-0 animate-pulse rounded-full bg-accent" />
-            Oferta termina en <span className="tabular-nums text-zinc-100">{formatRemaining(remaining)}</span>
+          <p className="flex min-w-0 items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-accent">
+            <span className="relative flex h-2 w-2 shrink-0">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
+            </span>
+            <span className="truncate">
+              Oferta termina en <span className="tabular-nums text-zinc-100">{formatRemaining(remaining)}</span>
+            </span>
+            <span className="animate-urgent-pulse shrink-0 rounded bg-emerald-500/20 px-1.5 py-0.5 text-[10px] font-black text-emerald-400">
+              -44%
+            </span>
           </p>
           <button
             onClick={onCtaClick}
-            className="relative shrink-0 overflow-hidden rounded-md bg-accent px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-white"
+            className="animate-cta-glow relative shrink-0 overflow-hidden rounded-md bg-accent px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-white"
           >
             <span className="pointer-events-none absolute inset-y-0 left-0 w-1/3 animate-shine bg-gradient-to-r from-transparent via-white/45 to-transparent" />
             <span className="relative">Guía</span>
@@ -96,40 +104,53 @@ export function OfferCountdownPopup({ onCtaClick }: { onCtaClick: () => void }) 
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-6 backdrop-blur-sm">
-      <div className="relative w-full max-w-sm overflow-hidden rounded-2xl border-2 border-accent bg-garage-950 p-6 text-center shadow-[0_0_60px_rgba(230,24,44,0.35)]">
+    <div className="animate-backdrop-in fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-6 backdrop-blur-sm">
+      <div className="animate-pop-in relative w-full max-w-sm overflow-hidden rounded-2xl border-2 border-accent bg-garage-950 p-6 text-center shadow-[0_0_60px_rgba(230,24,44,0.35)]">
+        <div className="pointer-events-none absolute inset-0 animate-glow-pulse rounded-full bg-accent/20 blur-3xl" />
+
         <button
           onClick={() => setPhase("banner")}
           aria-label="Cerrar oferta"
-          className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full border border-garage-700 text-zinc-400 transition hover:border-accent hover:text-accent"
+          className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-garage-700 text-zinc-400 transition hover:border-accent hover:text-accent"
         >
           <CloseIcon className="h-4 w-4" />
         </button>
 
-        <span className="inline-block rounded-full bg-accent/15 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.2em] text-accent">
-          Oferta por tiempo limitado
-        </span>
-
-        <p className="mt-4 text-3xl font-black tabular-nums text-zinc-50">{formatRemaining(remaining)}</p>
-        <p className="mt-1 text-xs uppercase tracking-widest text-zinc-500">Termina en</p>
-
-        <div className="mt-4 flex items-center justify-center gap-2">
-          <span className="text-lg text-zinc-500 line-through">15,89€</span>
-          <span className="text-3xl font-extrabold text-zinc-50">8,89€</span>
-          <span className="rounded-md bg-emerald-500/15 px-2 py-1 text-xs font-bold text-emerald-400">-44%</span>
-        </div>
-        <p className="mt-1 text-xs text-zinc-500">Pago único, acceso de por vida</p>
-
-        <button
-          onClick={onCtaClick}
-          className="relative mt-5 flex w-full items-center justify-center gap-2 overflow-hidden rounded-md border-2 border-accent bg-accent px-5 py-3 text-sm font-bold uppercase tracking-wide text-white shadow-[0_0_22px_rgba(230,24,44,0.45)]"
-        >
-          <span className="pointer-events-none absolute inset-y-0 left-0 w-1/3 animate-shine bg-gradient-to-r from-transparent via-white/45 to-transparent" />
-          <span className="relative flex items-center gap-2">
-            Obtener Guía
-            <CrownIcon className="h-4 w-4 shrink-0" />
+        <div className="relative">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-accent/15 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.2em] text-accent">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent" />
+            Oferta por tiempo limitado
           </span>
-        </button>
+
+          <p className="animate-urgent-pulse mt-4 text-3xl font-black tabular-nums text-zinc-50">
+            {formatRemaining(remaining)}
+          </p>
+          <p className="mt-1 text-xs uppercase tracking-widest text-zinc-500">Termina en</p>
+
+          <div className="mt-4 flex items-center justify-center gap-2">
+            <span className="text-lg text-zinc-500 line-through">15,89€</span>
+            <span className="text-3xl font-extrabold text-zinc-50">8,89€</span>
+            <span className="animate-urgent-pulse rounded-md bg-emerald-500/15 px-2 py-1 text-xs font-bold text-emerald-400">
+              -44%
+            </span>
+          </div>
+          <p className="mt-1 text-xs text-zinc-500">Pago único, acceso de por vida</p>
+          <p className="mt-2 text-[11px] font-semibold text-zinc-400">
+            🔥 Ya se han unido <span className="text-accent">+127</span> coches modificados
+          </p>
+
+          <button
+            onClick={onCtaClick}
+            className="animate-cta-glow relative mt-5 flex w-full items-center justify-center gap-2 overflow-hidden rounded-md border-2 border-accent bg-accent px-5 py-3 text-sm font-bold uppercase tracking-wide text-white transition-transform hover:scale-[1.02]"
+          >
+            <span className="pointer-events-none absolute inset-y-0 left-0 w-1/3 animate-shine bg-gradient-to-r from-transparent via-white/45 to-transparent" />
+            <span className="relative flex items-center gap-2">
+              Obtener Guía
+              <CrownIcon className="h-4 w-4 shrink-0" />
+            </span>
+          </button>
+          <p className="mt-2 text-[10px] text-zinc-600">Este precio no se repetirá cuando acabe el contador</p>
+        </div>
       </div>
     </div>
   );

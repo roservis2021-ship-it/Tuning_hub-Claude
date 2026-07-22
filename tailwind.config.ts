@@ -54,6 +54,27 @@ const config: Config = {
           "0%": { transform: "translateX(-160%) skewX(-20deg)" },
           "55%, 100%": { transform: "translateX(320%) skewX(-20deg)" },
         },
+        "pop-in": {
+          "0%": { opacity: "0", transform: "scale(0.82) translateY(10px)" },
+          "60%": { opacity: "1", transform: "scale(1.04) translateY(0)" },
+          "100%": { opacity: "1", transform: "scale(1) translateY(0)" },
+        },
+        "backdrop-in": {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+        "slide-down-in": {
+          "0%": { opacity: "0", transform: "translateY(-100%)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        "urgent-pulse": {
+          "0%, 100%": { transform: "scale(1)" },
+          "50%": { transform: "scale(1.06)" },
+        },
+        "cta-glow": {
+          "0%, 100%": { boxShadow: "0 0 22px rgba(230,24,44,0.45)" },
+          "50%": { boxShadow: "0 0 36px rgba(230,24,44,0.8)" },
+        },
       },
       animation: {
         "fade-up": "fade-up 0.8s ease-out both",
@@ -63,6 +84,11 @@ const config: Config = {
         "border-spin": "border-spin 4s linear infinite",
         "neon-text": "neon-text 3.2s ease-in-out infinite",
         shine: "shine 3.8s ease-in-out infinite",
+        "pop-in": "pop-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both",
+        "backdrop-in": "backdrop-in 0.35s ease-out both",
+        "slide-down-in": "slide-down-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both",
+        "urgent-pulse": "urgent-pulse 1s ease-in-out infinite",
+        "cta-glow": "cta-glow 1.6s ease-in-out infinite",
       },
     },
   },
