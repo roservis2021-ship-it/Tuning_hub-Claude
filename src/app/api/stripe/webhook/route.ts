@@ -22,10 +22,11 @@ export async function POST(req: Request) {
 
   try {
     // La activación del Premium la realiza /api/complete-signup tras crear la
-    // cuenta. Aquí solo desactivamos al cancelar/expirar la suscripción.
-    if (event.type === "customer.subscription.deleted") {
-      const subscription = event.data.object as Stripe.Subscription;
-      const uid = subscription.metadata?.uid;
+    // cuenta. Aquí solo desactivamos si el pago único se reembolsa.
+    if (event.type === "charge.refunded") {
+      const charge = event.data.object as Stripe.Charge;
+      const paymentIntentId = typeof charge.payment_intent === "string" ? charge.payment_intent : charge.payment_intent?.id;
+      const uid = paymentIntentId ? (await stripe.paymentIntents.retrieve(paymentIntentId)).metadata?.uid : undefined;
 
       if (uid) {
         await asServerAccount();

@@ -13,14 +13,14 @@ export async function GET(req: Request) {
     const session = await stripe.checkout.sessions.retrieve(sessionId);
 
     const paid = session.payment_status === "paid" || session.status === "complete";
-    const subscriptionId = typeof session.subscription === "string" ? session.subscription : session.subscription?.id ?? null;
+    const paymentIntentId = typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id ?? null;
     const customerId = typeof session.customer === "string" ? session.customer : session.customer?.id ?? null;
 
     return NextResponse.json({
       paid,
       email: session.customer_details?.email ?? session.customer_email ?? null,
       customerId,
-      subscriptionId,
+      paymentIntentId,
       vehicleId: session.metadata?.vehicleId ?? null,
     });
   } catch (err) {

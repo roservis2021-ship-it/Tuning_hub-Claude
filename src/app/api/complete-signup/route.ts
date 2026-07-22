@@ -27,7 +27,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "El pago no está confirmado" }, { status: 402 });
     }
 
-    const subscriptionId = typeof session.subscription === "string" ? session.subscription : session.subscription?.id ?? null;
+    const paymentIntentId = typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id ?? null;
     const customerId = typeof session.customer === "string" ? session.customer : session.customer?.id ?? null;
     const sessionVehicleId = session.metadata?.vehicleId ?? vehicleId ?? null;
 
@@ -47,7 +47,7 @@ export async function POST(req: Request) {
       premiumVehicleId: linkedVehicleId,
       ...(name ? { name } : {}),
       stripeCustomerId: customerId,
-      stripeSubscriptionId: subscriptionId,
+      stripePaymentIntentId: paymentIntentId,
     });
 
     if (linkedVehicleId) {
@@ -56,9 +56,9 @@ export async function POST(req: Request) {
 
     await setDoc(usedRef, { uid, createdAt: serverTimestamp() });
 
-    // Estampar el uid en la suscripción para identificar al usuario en cancelaciones.
-    if (subscriptionId) {
-      await stripe.subscriptions.update(subscriptionId, { metadata: { uid, vehicleId: linkedVehicleId ?? "" } }).catch(() => {});
+    // Estampar el uid en el pago para poder revocar el Premium si se reembolsa.
+    if (paymentIntentId) {
+      await stripe.paymentIntents.update(paymentIntentId, { metadata: { uid, vehicleId: linkedVehicleId ?? "" } }).catch(() => {});
     }
 
     return NextResponse.json({ ok: true });

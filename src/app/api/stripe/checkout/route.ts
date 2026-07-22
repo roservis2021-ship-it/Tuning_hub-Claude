@@ -15,9 +15,10 @@ export async function POST(req: Request) {
     const stripe = getStripe();
     const session = await stripe.checkout.sessions.create({
       ui_mode: "embedded_page",
-      mode: "subscription",
+      mode: "payment",
       line_items: [{ price: process.env.STRIPE_PRICE_ID!, quantity: 1 }],
-      subscription_data: { metadata: { vehicleId } },
+      payment_intent_data: { metadata: { vehicleId } },
+      metadata: { vehicleId },
       return_url: `${origin}/completar-cuenta?session_id={CHECKOUT_SESSION_ID}&vehicleId=${vehicleId}`,
     });
 

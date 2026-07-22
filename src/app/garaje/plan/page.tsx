@@ -8,6 +8,7 @@ import { useAuth } from "@/lib/auth-context";
 import { AppNav } from "@/components/AppNav";
 import { AssistantFab } from "@/components/AssistantFab";
 import { VerifyEmailBanner } from "@/components/VerifyEmailBanner";
+import { PromoRotatingBanner } from "@/components/PromoRotatingBanner";
 import { ScreenHeader } from "@/components/ScreenHeader";
 import { HeroBanner } from "@/components/HeroBanner";
 import { QuickActions } from "@/components/QuickActions";
@@ -88,7 +89,7 @@ const TRANSMISSION_LABELS: Record<string, string> = {
 function PlanContent() {
   const searchParams = useSearchParams();
   const vehicleId = searchParams.get("vehicleId");
-  const { user, userDoc, refreshUserDoc } = useAuth();
+  const { userDoc, refreshUserDoc } = useAuth();
   const isPremium = !!userDoc?.premium && userDoc.premiumVehicleId === vehicleId;
   const justCheckedOut = searchParams.get("checkout") === "success";
 
@@ -101,19 +102,6 @@ function PlanContent() {
       clearTimeout(timeout);
     };
   }, [justCheckedOut, isPremium, refreshUserDoc]);
-
-  async function handleOpenBillingPortal() {
-    if (!user) return;
-    try {
-      const res = await fetch("/api/stripe/portal", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ uid: user.uid }),
-      });
-      const data = await res.json();
-      if (res.ok && data.url) window.location.href = data.url;
-    } catch {}
-  }
 
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [loading, setLoading] = useState(true);
@@ -304,14 +292,10 @@ function PlanContent() {
   return (
     <>
       <main className="mx-auto flex min-h-dvh max-w-2xl flex-col gap-5 px-4 py-6 pb-24">
-        <ScreenHeader
-          title={`${vehicle.brand} ${vehicle.model}`}
-          subtitle="Plan de acción tuning"
-          backHref="/"
-          onMenuClick={isPremium ? handleOpenBillingPortal : undefined}
-        />
+        <ScreenHeader title={`${vehicle.brand} ${vehicle.model}`} subtitle="Plan de acción tuning" backHref="/" />
 
         {isPremium && <VerifyEmailBanner />}
+        {!isPremium && !justCheckedOut && <PromoRotatingBanner vehicleId={vehicleId} />}
 
         {justCheckedOut && !isPremium && (
           <p className="-mt-3 flex items-center justify-center gap-2 text-center text-xs text-accent">

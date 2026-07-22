@@ -23,7 +23,6 @@ export default function PerfilPage() {
 
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [resent, setResent] = useState(false);
-  const [portalLoading, setPortalLoading] = useState(false);
 
   const premiumVehicleId = userDoc?.premiumVehicleId;
 
@@ -38,23 +37,6 @@ export default function PerfilPage() {
     if (!user) return;
     await sendEmailVerification(user).catch(() => {});
     setResent(true);
-  }
-
-  async function handlePortal() {
-    if (!user) return;
-    setPortalLoading(true);
-    try {
-      const res = await fetch("/api/stripe/portal", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ uid: user.uid }),
-      });
-      const data = await res.json();
-      if (res.ok && data.url) window.location.href = data.url;
-      else setPortalLoading(false);
-    } catch {
-      setPortalLoading(false);
-    }
   }
 
   async function handleLogout() {
@@ -125,14 +107,11 @@ export default function PerfilPage() {
           )}
         </div>
 
+        <p className="rounded-md border border-garage-700 bg-garage-900/40 px-4 py-3 text-center text-xs text-zinc-500">
+          Guía de pago único — acceso de por vida, sin renovaciones.
+        </p>
+
         <div className="flex flex-col gap-3">
-          <button
-            onClick={handlePortal}
-            disabled={portalLoading}
-            className="rounded-md border border-garage-700 bg-garage-900 px-6 py-3 text-sm font-medium text-zinc-200 transition hover:border-accent disabled:opacity-60"
-          >
-            {portalLoading ? "Abriendo…" : "Gestionar suscripción"}
-          </button>
           <button
             onClick={handleLogout}
             className="rounded-md px-6 py-3 text-sm font-medium text-zinc-500 transition hover:text-zinc-300"
