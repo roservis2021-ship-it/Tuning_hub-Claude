@@ -50,6 +50,13 @@ export default function NuevoVehiculoPage() {
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
   const [submitting, setSubmitting] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [manualEntry, setManualEntry] = useState(false);
+
+  function toggleManualEntry(next: boolean) {
+    setManualEntry(next);
+    setForm((prev) => ({ ...prev, brand: "", model: "", generation: "", engine: "", motorCode: "" }));
+    setErrors({});
+  }
 
   const models = getModels(form.brand);
   const generations = getGenerations(form.brand, form.model);
@@ -142,6 +149,8 @@ export default function NuevoVehiculoPage() {
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-5" noValidate>
+        {!manualEntry ? (
+          <>
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <Field label="Marca" error={errors.brand}>
             <select
@@ -222,7 +231,67 @@ export default function NuevoVehiculoPage() {
               </select>
             </Field>
           )}
+        </div>
 
+        <button
+          type="button"
+          onClick={() => toggleManualEntry(true)}
+          className="rounded-md border border-dashed border-garage-700 px-4 py-3 text-center text-sm font-semibold text-zinc-400 transition hover:border-accent hover:text-accent"
+        >
+          ¿No encuentras tu coche? Escríbelo
+        </button>
+          </>
+        ) : (
+          <>
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <Field label="Marca" error={errors.brand}>
+            <input
+              className="input"
+              value={form.brand}
+              onChange={(e) => update("brand", e.target.value)}
+              placeholder="Ej: Renault"
+            />
+          </Field>
+
+          <Field label="Modelo" error={errors.model}>
+            <input
+              className="input"
+              value={form.model}
+              onChange={(e) => update("model", e.target.value)}
+              placeholder="Ej: Clio"
+            />
+          </Field>
+
+          <Field label="Generación" error={errors.generation}>
+            <input
+              className="input"
+              value={form.generation}
+              onChange={(e) => update("generation", e.target.value)}
+              placeholder="Ej: 3ª generación (2005-2012)"
+            />
+          </Field>
+
+          <Field label="Motorización" error={errors.engine}>
+            <input
+              className="input"
+              value={form.engine}
+              onChange={(e) => update("engine", e.target.value)}
+              placeholder="Ej: 1.5 dCi"
+            />
+          </Field>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => toggleManualEntry(false)}
+          className="rounded-md border border-dashed border-garage-700 px-4 py-3 text-center text-sm font-semibold text-zinc-400 transition hover:border-accent hover:text-accent"
+        >
+          Volver a buscar en el catálogo
+        </button>
+          </>
+        )}
+
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <Field label="Kilometraje" error={errors.mileage}>
             <input
               className="input"

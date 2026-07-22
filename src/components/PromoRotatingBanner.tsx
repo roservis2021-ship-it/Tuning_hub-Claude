@@ -1,0 +1,35 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
+const MESSAGES = [
+  "Descubre una guía detallada para tu vehículo",
+  "Aquí comienza tu proyecto",
+  "Los mejores mods para tu coche",
+];
+
+const ROTATE_MS = 4_000;
+
+export function PromoRotatingBanner({ vehicleId }: { vehicleId: string | null }) {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => setIndex((i) => (i + 1) % MESSAGES.length), ROTATE_MS);
+    return () => clearInterval(id);
+  }, []);
+
+  return (
+    <div className="flex items-center justify-between gap-3 rounded-xl border border-accent/40 bg-gradient-to-r from-accent/15 via-garage-900/40 to-accent/15 px-4 py-3">
+      <p key={index} className="animate-fade-up min-w-0 flex-1 truncate text-xs font-semibold text-zinc-100">
+        {MESSAGES[index]}
+      </p>
+      <a
+        href={`/premium${vehicleId ? `?vehicleId=${vehicleId}` : ""}`}
+        className="relative shrink-0 overflow-hidden rounded-md bg-accent px-4 py-2 text-xs font-bold uppercase tracking-wide text-white shadow-[0_0_16px_rgba(230,24,44,0.4)]"
+      >
+        <span className="pointer-events-none absolute inset-y-0 left-0 w-1/3 animate-shine bg-gradient-to-r from-transparent via-white/45 to-transparent" />
+        <span className="relative">Guía</span>
+      </a>
+    </div>
+  );
+}

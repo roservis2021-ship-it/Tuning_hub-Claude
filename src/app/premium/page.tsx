@@ -4,6 +4,7 @@ import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { display } from "@/lib/fonts";
 import { LedBorderCard } from "@/components/LedBorderCard";
+import { OfferCountdownPopup } from "@/components/OfferCountdownPopup";
 import {
   ShieldCheckIcon,
   TargetIcon,
@@ -23,17 +24,18 @@ const TRUST_BADGES = [
   { icon: ShieldCheckIcon, label: "Información", highlight: "100% fiable" },
   { icon: TargetIcon, label: "Recomendaciones", highlight: "personalizadas" },
   { icon: LockIcon, label: "Datos exclusivos", highlight: "para miembros" },
+  { icon: TrendUpIcon, label: "Comunidad", highlight: "+127 coches modificados" },
 ];
 
 const FEATURES = [
-  { icon: EngineIcon, title: "Diagnosticar", desc: "Describe un problema o sube una foto y recibe un diagnóstico al instante." },
-  { icon: WrenchNavIcon, title: "Mantenimiento", desc: "Historial completo, recordatorios y aviso de qué tienes pendiente." },
-  { icon: GaugeIcon, title: "Modificaciones", desc: "Registra tus mods reales y sigue tu progreso frente al plan." },
-  { icon: MessageFabIcon, title: "Ingeniero", desc: "Chatea con tu ingeniero, que conoce tu coche, tu historial y tus mods." },
+  { icon: GaugeIcon, title: "Guía detallada de modificaciones", desc: "Plan de modificación completo, por etapas, específico para tu coche." },
+  { icon: WrenchNavIcon, title: "Mantenimiento específico", desc: "Historial completo, recordatorios y aviso de qué tienes pendiente." },
+  { icon: EngineIcon, title: "Diagnóstico en caso de avería", desc: "Describe un problema o sube una foto y recibe un diagnóstico al instante." },
+  { icon: MessageFabIcon, title: "Asistente", desc: "Chatea con tu ingeniero, que conoce tu coche, tu historial y tus mods." },
 ];
 
 const FOOTER_TRUST = [
-  { icon: ShieldCheckIcon, label: "Cancela cuando quieras" },
+  { icon: ShieldCheckIcon, label: "Acceso de por vida" },
   { icon: LockIcon, label: "Pago 100% seguro" },
   { icon: RefreshIcon, label: "Actualizaciones continuas" },
 ];
@@ -70,16 +72,16 @@ function PremiumContent() {
     </button>
     <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-8 px-6 pt-16 pb-48">
       <div>
-        <span className="text-xs font-bold uppercase tracking-[0.35em] text-accent">Premium</span>
+        <span className="text-xs font-bold uppercase tracking-[0.35em] text-accent">Guía</span>
         <h1 className={`${display.className} italic mt-2 text-4xl font-extrabold uppercase leading-[0.95] tracking-tight text-zinc-50`}>
           Lleva tu coche al siguiente <span className="text-accent">nivel</span>
         </h1>
         <p className="mt-3 text-sm text-zinc-400">
-          Todo lo que necesitas para cuidar, mejorar y exprimir tu coche. <span className="text-accent">En un solo sitio.</span>
+          Descubre una guía específica para modificar tu coche.
         </p>
       </div>
 
-      <div className="grid grid-cols-3 gap-2 rounded-xl border border-garage-700 bg-garage-900/40 p-4">
+      <div className="grid grid-cols-2 gap-2 rounded-xl border border-garage-700 bg-garage-900/40 p-4">
         {TRUST_BADGES.map((b) => (
           <div key={b.label} className="flex flex-col items-center gap-1.5 text-center">
             <b.icon className="h-6 w-6 text-emerald-400" />
@@ -141,17 +143,17 @@ function PremiumContent() {
         >
           <span className="pointer-events-none absolute inset-y-0 left-0 w-1/3 animate-shine bg-gradient-to-r from-transparent via-white/45 to-transparent" />
           <span className="relative flex flex-col items-start leading-none">
-            <span className="flex items-baseline gap-1">
-              <span className="text-[11px] font-semibold uppercase tracking-wide text-white/80">Desde</span>
-              <span className="text-xl font-extrabold">0,39€</span>
-              <span className="text-xs font-semibold text-white/80">/día</span>
+            <span className="flex items-baseline gap-1.5">
+              <span className="text-xl font-extrabold">8,89€</span>
+              <span className="text-sm font-semibold text-white/60 line-through">15,89€</span>
+              <span className="rounded bg-white/15 px-1.5 py-0.5 text-[10px] font-bold text-white">-44%</span>
             </span>
-            <span className="mt-0.5 text-[10px] font-semibold italic uppercase tracking-widest text-white/70">
-              (11,99€/mes)
+            <span className="mt-0.5 text-[10px] font-semibold uppercase tracking-widest text-white/70">
+              Pago único
             </span>
           </span>
           <span className="relative flex shrink-0 items-center gap-1.5 text-sm font-bold uppercase tracking-wide">
-            {submitting ? "Redirigiendo…" : "Obtener plan"}
+            {submitting ? "Redirigiendo…" : "Obtener Guía"}
             <CrownIcon className="h-4 w-4 shrink-0" />
           </span>
         </button>
@@ -166,6 +168,8 @@ function PremiumContent() {
         </div>
       </div>
     </div>
+
+    <OfferCountdownPopup onCtaClick={handleSubscribe} />
     </>
   );
 }
