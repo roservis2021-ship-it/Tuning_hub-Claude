@@ -37,10 +37,8 @@ function PagoContent() {
       <ScreenHeader title="Pago seguro" subtitle="Tuning Hub Premium" backHref={`/premium?vehicleId=${vehicleId}`} />
 
       <div className="text-center">
-        <p className="text-sm text-zinc-400">Suscripción</p>
-        <p className={`${display.className} italic text-2xl font-extrabold text-zinc-50`}>
-          11,99€ <span className="text-sm not-italic font-medium text-zinc-500">/ mes</span>
-        </p>
+        <p className="text-sm text-zinc-400">Pago único</p>
+        <p className={`${display.className} italic text-2xl font-extrabold text-zinc-50`}>8,89€</p>
       </div>
 
       <div className="overflow-hidden rounded-xl border border-garage-700 bg-white p-1">
