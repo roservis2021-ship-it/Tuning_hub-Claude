@@ -1,7 +1,9 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase-client";
 import { display } from "@/lib/fonts";
 import { LedBorderCard } from "@/components/LedBorderCard";
 import { OfferCountdownPopup } from "@/components/OfferCountdownPopup";
@@ -46,6 +48,19 @@ function PremiumContent() {
   const vehicleId = searchParams.get("vehicleId");
 
   const [submitting, setSubmitting] = useState(false);
+  const [carLabel, setCarLabel] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!vehicleId) return;
+    getDoc(doc(db, "vehicles", vehicleId))
+      .then((snap) => {
+        if (snap.exists()) {
+          const v = snap.data() as { brand?: string; model?: string };
+          if (v.brand && v.model) setCarLabel(`${v.brand} ${v.model}`);
+        }
+      })
+      .catch(() => {});
+  }, [vehicleId]);
 
   function handleSubscribe() {
     if (!vehicleId) return;
@@ -74,7 +89,7 @@ function PremiumContent() {
       <div>
         <span className="text-xs font-bold uppercase tracking-[0.35em] text-accent">Guía</span>
         <h1 className={`${display.className} italic mt-2 text-4xl font-extrabold uppercase leading-[0.95] tracking-tight text-zinc-50`}>
-          Lleva tu coche al siguiente <span className="text-accent">nivel</span>
+          Lleva tu {carLabel ?? "coche"} al siguiente <span className="text-accent">nivel</span>
         </h1>
         <p className="mt-3 text-sm text-zinc-400">
           Descubre una guía específica para modificar tu coche.
@@ -152,8 +167,17 @@ function PremiumContent() {
               Pago único
             </span>
           </span>
-          <span className="relative flex shrink-0 items-center gap-1.5 text-sm font-bold uppercase tracking-wide">
-            {submitting ? "Redirigiendo…" : "Obtener Guía"}
+          <span className="relative flex shrink-0 items-center gap-1.5">
+            {submitting ? (
+              <span className="text-sm font-bold uppercase tracking-wide">Redirigiendo…</span>
+            ) : (
+              <span className="flex flex-col items-end leading-none">
+                <span className="text-[9px] font-semibold uppercase tracking-wide text-white/75">
+                  Proyecto de modificación{carLabel ? " del" : ""}
+                </span>
+                <span className="text-base font-black uppercase tracking-wide">{carLabel ?? "tu coche"}</span>
+              </span>
+            )}
             <CrownIcon className="h-4 w-4 shrink-0" />
           </span>
         </button>
