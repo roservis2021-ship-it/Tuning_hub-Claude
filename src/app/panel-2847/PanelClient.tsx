@@ -29,6 +29,7 @@ type Stats = {
   topScreens: { path: string; count: number }[];
   topLocations: { label: string; count: number }[];
   hourlyVisits: { hour: string; count: number }[];
+  topSearchedCars: { label: string; count: number }[];
 };
 
 const ACCENT = "#e6182c";
@@ -298,7 +299,7 @@ export function PanelClient() {
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <RankedList
           title="Pantallas más visitadas"
           items={stats.topScreens.map((s) => ({ label: s.path, count: s.count }))}
@@ -308,6 +309,11 @@ export function PanelClient() {
           title="Ubicación de visitantes"
           items={stats.topLocations.map((l) => ({ label: l.label, count: l.count }))}
           emptyLabel="Sin datos todavía (o probando en local)"
+        />
+        <RankedList
+          title="Coches más buscados"
+          items={stats.topSearchedCars.map((c) => ({ label: c.label, count: c.count }))}
+          emptyLabel="Sin datos todavía"
         />
       </div>
 

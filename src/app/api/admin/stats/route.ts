@@ -138,6 +138,24 @@ export async function GET(req: Request) {
       console.error("admin/stats: fallo al leer páginas vistas", err instanceof Error ? err.message : err);
     }
 
+    let topSearchedCars: { label: string; count: number }[] = [];
+    try {
+      const vehiclesSnap = await getDocs(query(vehiclesCol, orderBy("createdAt", "desc"), limit(2000)));
+      const carCounts = new Map<string, number>();
+      for (const d of vehiclesSnap.docs) {
+        const v = d.data() as { brand?: string; model?: string };
+        if (!v.brand || !v.model) continue;
+        const key = `${v.brand} ${v.model}`;
+        carCounts.set(key, (carCounts.get(key) ?? 0) + 1);
+      }
+      topSearchedCars = Array.from(carCounts.entries())
+        .map(([label, count]) => ({ label, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 8);
+    } catch (err) {
+      console.error("admin/stats: fallo al leer coches más buscados", err instanceof Error ? err.message : err);
+    }
+
     const recentUsers = recentUsersSnap.docs.map((d) => {
       const u = d.data() as { email?: string; name?: string; premium?: boolean; createdAt?: Timestamp };
       return {
@@ -180,6 +198,7 @@ export async function GET(req: Request) {
       topScreens,
       topLocations,
       hourlyVisits,
+      topSearchedCars,
     });
   } catch (err) {
     console.error("admin/stats: fallo", err instanceof Error ? err.message : err);
