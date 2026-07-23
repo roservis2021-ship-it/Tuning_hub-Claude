@@ -148,6 +148,7 @@ export async function GET(req: Request) {
       for (const d of vehiclesSnap.docs) {
         const v = d.data() as { brand?: string; model?: string };
         if (!v.brand || !v.model) continue;
+        if (v.brand.trim().toUpperCase().startsWith("TEST")) continue;
         const key = `${v.brand} ${v.model}`;
         carCounts.set(key, (carCounts.get(key) ?? 0) + 1);
       }
