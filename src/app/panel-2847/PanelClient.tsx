@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { PasswordInput } from "@/components/PasswordInput";
 import {
   Bar,
   BarChart,
@@ -116,12 +117,10 @@ export function PanelClient() {
           className="flex w-full max-w-xs flex-col gap-3 rounded-xl border border-garage-700 bg-garage-900/60 p-6"
         >
           <p className="text-sm font-semibold text-zinc-300">Acceso restringido</p>
-          <input
-            type="password"
+          <PasswordInput
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={setPassword}
             placeholder="Contraseña"
-            className="input"
             autoFocus
           />
           {error && <p className="text-xs text-red-400">{error}</p>}

@@ -6,6 +6,7 @@ import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/
 import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 import { getFirebaseAuth, db } from "@/lib/firebase-client";
 import { display } from "@/lib/fonts";
+import { PasswordInput } from "@/components/PasswordInput";
 
 type SessionInfo = { paid: boolean; email: string | null; vehicleId: string | null };
 
@@ -147,14 +148,7 @@ function CompletarContent() {
 
         <label className="flex flex-col gap-1.5 text-sm">
           <span className="font-medium text-zinc-300">Crea una contraseña</span>
-          <input
-            className="input"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            autoComplete="new-password"
-            required
-          />
+          <PasswordInput value={password} onChange={setPassword} autoComplete="new-password" required />
         </label>
 
         <div className="flex flex-col gap-2">

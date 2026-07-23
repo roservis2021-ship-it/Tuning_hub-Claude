@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { getFirebaseAuth } from "@/lib/firebase-client";
 import { display } from "@/lib/fonts";
+import { PasswordInput } from "@/components/PasswordInput";
 
 function LoginContent() {
   const router = useRouter();
@@ -52,14 +53,7 @@ function LoginContent() {
         </label>
         <label className="flex flex-col gap-1.5 text-sm">
           <span className="font-medium text-zinc-300">Contraseña</span>
-          <input
-            className="input"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            autoComplete="current-password"
-            required
-          />
+          <PasswordInput value={password} onChange={setPassword} autoComplete="current-password" required />
         </label>
 
         {error && <p className="rounded-md bg-red-950/50 px-4 py-3 text-sm text-red-400">{error}</p>}

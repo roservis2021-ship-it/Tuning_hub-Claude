@@ -6,6 +6,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc, updateDoc, serverTimestamp } from "firebase/firestore";
 import { getFirebaseAuth, db } from "@/lib/firebase-client";
 import { display } from "@/lib/fonts";
+import { PasswordInput } from "@/components/PasswordInput";
 
 function RegistroContent() {
   const router = useRouter();
@@ -84,25 +85,11 @@ function RegistroContent() {
         </label>
         <label className="flex flex-col gap-1.5 text-sm">
           <span className="font-medium text-zinc-300">Contraseña</span>
-          <input
-            className="input"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            autoComplete="new-password"
-            required
-          />
+          <PasswordInput value={password} onChange={setPassword} autoComplete="new-password" required />
         </label>
         <label className="flex flex-col gap-1.5 text-sm">
           <span className="font-medium text-zinc-300">Repite la contraseña</span>
-          <input
-            className="input"
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            autoComplete="new-password"
-            required
-          />
+          <PasswordInput value={confirmPassword} onChange={setConfirmPassword} autoComplete="new-password" required />
         </label>
 
         {error && <p className="rounded-md bg-red-950/50 px-4 py-3 text-sm text-red-400">{error}</p>}
