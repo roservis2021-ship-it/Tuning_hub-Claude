@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase-client";
@@ -62,6 +62,20 @@ export default function NuevoVehiculoPage() {
   const generations = getGenerations(form.brand, form.model);
   const selectedGeneration = generations.find((g) => g.code === form.generation);
   const engineCodes = getEngineCodes(form.engine);
+  const isTestMode = manualEntry && form.brand.trim().toUpperCase() === "TEST";
+
+  useEffect(() => {
+    if (!isTestMode) return;
+    setForm((prev) => ({
+      ...prev,
+      model: prev.model || "Prueba",
+      generation: prev.generation || "Test",
+      engine: prev.engine || "Test",
+      mileage: prev.mileage || "100000",
+      fuelType: prev.fuelType || "GASOLINA",
+      transmission: prev.transmission || "MANUAL",
+    }));
+  }, [isTestMode]);
 
   function update<K extends keyof FormState>(key: K, value: string) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -253,33 +267,43 @@ export default function NuevoVehiculoPage() {
             />
           </Field>
 
-          <Field label="Modelo" error={errors.model}>
-            <input
-              className="input"
-              value={form.model}
-              onChange={(e) => update("model", e.target.value)}
-              placeholder="Ej: Clio"
-            />
-          </Field>
+          {!isTestMode && (
+            <>
+              <Field label="Modelo" error={errors.model}>
+                <input
+                  className="input"
+                  value={form.model}
+                  onChange={(e) => update("model", e.target.value)}
+                  placeholder="Ej: Clio"
+                />
+              </Field>
 
-          <Field label="Generación" error={errors.generation}>
-            <input
-              className="input"
-              value={form.generation}
-              onChange={(e) => update("generation", e.target.value)}
-              placeholder="Ej: 3ª generación (2005-2012)"
-            />
-          </Field>
+              <Field label="Generación" error={errors.generation}>
+                <input
+                  className="input"
+                  value={form.generation}
+                  onChange={(e) => update("generation", e.target.value)}
+                  placeholder="Ej: 3ª generación (2005-2012)"
+                />
+              </Field>
 
-          <Field label="Motorización" error={errors.engine}>
-            <input
-              className="input"
-              value={form.engine}
-              onChange={(e) => update("engine", e.target.value)}
-              placeholder="Ej: 1.5 dCi"
-            />
-          </Field>
+              <Field label="Motorización" error={errors.engine}>
+                <input
+                  className="input"
+                  value={form.engine}
+                  onChange={(e) => update("engine", e.target.value)}
+                  placeholder="Ej: 1.5 dCi"
+                />
+              </Field>
+            </>
+          )}
         </div>
+
+        {isTestMode && (
+          <p className="rounded-md border border-dashed border-accent/40 bg-accent/5 px-4 py-3 text-xs text-accent">
+            Modo prueba activado — no hace falta rellenar nada más, solo pulsa el botón de abajo.
+          </p>
+        )}
 
         <button
           type="button"
@@ -291,47 +315,49 @@ export default function NuevoVehiculoPage() {
           </>
         )}
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-          <Field label="Kilometraje" error={errors.mileage}>
-            <input
-              className="input"
-              inputMode="numeric"
-              value={form.mileage}
-              onChange={(e) => update("mileage", e.target.value)}
-              placeholder="120000"
-            />
-          </Field>
+        {!isTestMode && (
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <Field label="Kilometraje" error={errors.mileage}>
+              <input
+                className="input"
+                inputMode="numeric"
+                value={form.mileage}
+                onChange={(e) => update("mileage", e.target.value)}
+                placeholder="120000"
+              />
+            </Field>
 
-          <Field label="Combustible" error={errors.fuelType}>
-            <select
-              className="input"
-              value={form.fuelType}
-              onChange={(e) => update("fuelType", e.target.value)}
-            >
-              <option value="">Selecciona...</option>
-              {FUEL_TYPES.map((f) => (
-                <option key={f.value} value={f.value}>
-                  {f.label}
-                </option>
-              ))}
-            </select>
-          </Field>
+            <Field label="Combustible" error={errors.fuelType}>
+              <select
+                className="input"
+                value={form.fuelType}
+                onChange={(e) => update("fuelType", e.target.value)}
+              >
+                <option value="">Selecciona...</option>
+                {FUEL_TYPES.map((f) => (
+                  <option key={f.value} value={f.value}>
+                    {f.label}
+                  </option>
+                ))}
+              </select>
+            </Field>
 
-          <Field label="Transmisión" error={errors.transmission}>
-            <select
-              className="input"
-              value={form.transmission}
-              onChange={(e) => update("transmission", e.target.value)}
-            >
-              <option value="">Selecciona...</option>
-              {TRANSMISSIONS.map((t) => (
-                <option key={t.value} value={t.value}>
-                  {t.label}
-                </option>
-              ))}
-            </select>
-          </Field>
-        </div>
+            <Field label="Transmisión" error={errors.transmission}>
+              <select
+                className="input"
+                value={form.transmission}
+                onChange={(e) => update("transmission", e.target.value)}
+              >
+                <option value="">Selecciona...</option>
+                {TRANSMISSIONS.map((t) => (
+                  <option key={t.value} value={t.value}>
+                    {t.label}
+                  </option>
+                ))}
+              </select>
+            </Field>
+          </div>
+        )}
 
         {serverError && (
           <p className="rounded-md bg-red-950/50 px-4 py-3 text-sm text-red-400">
