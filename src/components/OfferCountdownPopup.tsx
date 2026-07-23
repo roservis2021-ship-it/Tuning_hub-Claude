@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { CloseIcon, CrownIcon } from "@/components/icons";
+import { useTotalVehicles } from "@/lib/use-total-vehicles";
 
 const CYCLE_MS = 24 * 60 * 60 * 1000;
 const POPUP_DELAY_MS = 5_000;
@@ -29,6 +30,7 @@ export function OfferCountdownPopup({ onCtaClick }: { onCtaClick: () => void }) 
   const [deadline, setDeadline] = useState<number | null>(null);
   const [remaining, setRemaining] = useState(0);
   const [phase, setPhase] = useState<"hidden" | "popup" | "banner">("hidden");
+  const totalVehicles = useTotalVehicles();
 
   useEffect(() => {
     const d = getDeadline();
@@ -135,9 +137,11 @@ export function OfferCountdownPopup({ onCtaClick }: { onCtaClick: () => void }) 
             </span>
           </div>
           <p className="mt-1 text-xs text-zinc-500">Pago único, acceso de por vida</p>
-          <p className="mt-2 text-[11px] font-semibold text-zinc-400">
-            🔥 Ya se han unido <span className="text-accent">+127</span> coches modificados
-          </p>
+          {totalVehicles !== null && (
+            <p className="mt-2 text-[11px] font-semibold text-zinc-400">
+              🔥 Ya se han analizado <span className="text-accent">+{totalVehicles}</span> coches
+            </p>
+          )}
 
           <button
             onClick={onCtaClick}

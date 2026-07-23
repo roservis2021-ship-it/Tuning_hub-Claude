@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase-client";
 import { display } from "@/lib/fonts";
+import { useTotalVehicles } from "@/lib/use-total-vehicles";
 import { LedBorderCard } from "@/components/LedBorderCard";
 import { OfferCountdownPopup } from "@/components/OfferCountdownPopup";
 import {
@@ -26,7 +27,6 @@ const TRUST_BADGES = [
   { icon: ShieldCheckIcon, label: "Información", highlight: "100% fiable" },
   { icon: TargetIcon, label: "Recomendaciones", highlight: "personalizadas" },
   { icon: LockIcon, label: "Datos exclusivos", highlight: "para miembros" },
-  { icon: TrendUpIcon, label: "Comunidad", highlight: "+127 coches modificados" },
 ];
 
 const FEATURES = [
@@ -42,6 +42,27 @@ const FOOTER_TRUST = [
   { icon: RefreshIcon, label: "Actualizaciones continuas" },
 ];
 
+const PROJECT_CHECKLIST = [
+  { label: "Motor y ficha técnica", unlocked: true },
+  { label: "Objetivo del proyecto", unlocked: true },
+  { label: "Ruta de preparación completa", unlocked: false },
+  { label: "Calendario del proyecto", unlocked: false },
+  { label: "Compatibilidades reales", unlocked: false },
+  { label: "Costes estimados", unlocked: false },
+  { label: "Riesgos detallados", unlocked: false },
+  { label: "Orden de preparación", unlocked: false },
+];
+
+const AUTHORITY_SOURCES = [
+  "Datos técnicos",
+  "Compatibilidades",
+  "Averías frecuentes",
+  "Historial conocido",
+  "Objetivos de potencia",
+  "Mantenimiento",
+  "Configuraciones habituales",
+];
+
 function PremiumContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -49,6 +70,7 @@ function PremiumContent() {
 
   const [submitting, setSubmitting] = useState(false);
   const [carLabel, setCarLabel] = useState<string | null>(null);
+  const totalVehicles = useTotalVehicles();
 
   useEffect(() => {
     if (!vehicleId) return;
@@ -107,6 +129,16 @@ function PremiumContent() {
             </p>
           </div>
         ))}
+        {totalVehicles !== null && (
+          <div className="flex flex-col items-center gap-1.5 text-center">
+            <TrendUpIcon className="h-6 w-6 text-emerald-400" />
+            <p className="text-[10px] font-semibold uppercase leading-tight text-zinc-400">
+              Comunidad
+              <br />
+              <span className="text-emerald-400">+{totalVehicles} coches analizados</span>
+            </p>
+          </div>
+        )}
       </div>
 
       <div className="flex items-center gap-3">
@@ -144,6 +176,35 @@ function PremiumContent() {
         </div>
       </div>
 
+      <div className="rounded-xl border border-garage-700 bg-garage-900/40 p-4">
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-zinc-400">
+          Así se ve tu <span className="text-accent">proyecto completo</span>
+        </p>
+        <div className="mt-3 grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2">
+          {PROJECT_CHECKLIST.map((item) => (
+            <div key={item.label} className="flex items-center gap-2">
+              {item.unlocked ? (
+                <CheckCircleIcon className="h-4 w-4 shrink-0 text-emerald-400" />
+              ) : (
+                <LockIcon className="h-4 w-4 shrink-0 text-zinc-600" />
+              )}
+              <span className={`text-sm ${item.unlocked ? "text-zinc-200" : "text-zinc-500"}`}>{item.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="rounded-xl border border-garage-700 bg-garage-900/20 p-4">
+        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500">Análisis basado en</p>
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {AUTHORITY_SOURCES.map((s) => (
+            <span key={s} className="rounded-full border border-garage-700 px-2.5 py-1 text-[10px] font-semibold text-zinc-400">
+              {s}
+            </span>
+          ))}
+        </div>
+      </div>
+
     </main>
 
     <div
@@ -151,6 +212,9 @@ function PremiumContent() {
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
       <div className="mx-auto flex max-w-md flex-col gap-2 px-5 py-3">
+        <p className="text-center text-[11px] text-zinc-500">
+          Menos que un cambio de aceite. <span className="text-zinc-300">Puede evitarte errores muy caros al preparar tu coche.</span>
+        </p>
         <button
           onClick={handleSubscribe}
           disabled={submitting}
