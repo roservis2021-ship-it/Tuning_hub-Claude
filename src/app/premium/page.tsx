@@ -171,11 +171,11 @@ function PremiumContent() {
             {submitting ? (
               <span className="text-sm font-bold uppercase tracking-wide">Redirigiendo…</span>
             ) : (
-              <span className="flex flex-col items-end leading-none">
-                <span className="text-[9px] font-semibold uppercase tracking-wide text-white/75">
+              <span className="flex flex-col items-end leading-tight">
+                <span className="text-xs font-semibold uppercase tracking-wide text-white/80">
                   Proyecto de modificación{carLabel ? " del" : ""}
                 </span>
-                <span className="text-base font-black uppercase tracking-wide">{carLabel ?? "tu coche"}</span>
+                <span className="text-lg font-black uppercase tracking-wide">{carLabel ?? "tu coche"}</span>
               </span>
             )}
             <CrownIcon className="h-4 w-4 shrink-0" />
