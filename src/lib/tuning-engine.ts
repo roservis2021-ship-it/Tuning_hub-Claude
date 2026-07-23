@@ -276,6 +276,70 @@ export type ModStage = {
   note?: string;
 };
 
+export type ProjectScorecard = {
+  salud: number;
+  potencial: number;
+  fiabilidad: number;
+  preparacionRecomendada: string;
+  objetivoCv: number;
+  tiempoEstimado: string;
+};
+
+function clamp(n: number, min: number, max: number): number {
+  return Math.max(min, Math.min(max, n));
+}
+
+/**
+ * Puntuación honesta y determinista (no generada por IA) a partir de datos
+ * reales del vehículo: kilometraje, tipo de aspiración y potencia estimada.
+ * Sirve de "recompensa inmediata" nada más buscar el coche, antes de mostrar
+ * el plan completo.
+ */
+/** Extrae un valor de CV representativo (el más alto) de una etiqueta como "150 CV" o "258-330 CV (estimado)". */
+export function parsePotenciaValue(label: string): number {
+  const matches = label.match(/\d{2,4}/g);
+  if (!matches) return 0;
+  return Math.max(...matches.map(Number));
+}
+
+export function computeScorecard(params: {
+  mileage: number;
+  aspiracion: Aspiracion;
+  potencia: PowerEstimate;
+  stages: ModStage[];
+}): ProjectScorecard {
+  const { mileage, aspiracion, potencia, stages } = params;
+  const highMileage = mileage >= 150000;
+  const mileageFactor = clamp(mileage / 250000, 0, 1);
+
+  const salud = Math.round(clamp(96 - mileageFactor * 46, 45, 96));
+  const fiabilidad = Math.round(clamp(94 - mileageFactor * 34, 45, 95));
+
+  let potencial = 60;
+  if (aspiracion === "Turbo") potencial = 90;
+  else if (aspiracion === "Híbrido") potencial = 55;
+  else if (aspiracion === "Eléctrico") potencial = 50;
+
+  const preparacionRecomendada = highMileage
+    ? "Puesta a punto antes de Stage 1"
+    : aspiracion === "Turbo"
+    ? "Stage 1"
+    : aspiracion === "Atmosférico"
+    ? "Optimización básica"
+    : "Ajustes ligeros";
+
+  let cvFactor = 1.15;
+  if (aspiracion === "Turbo") cvFactor = highMileage ? 1.3 : 1.55;
+  else if (aspiracion === "Híbrido" || aspiracion === "Eléctrico") cvFactor = 1.1;
+  const objetivoCv = Math.round((potencia.high * cvFactor) / 5) * 5;
+
+  const stageCount = Math.max(1, stages.length);
+  const tiempoEstimado =
+    stageCount <= 1 ? "1-2 meses" : stageCount === 2 ? "2-4 meses" : stageCount === 3 ? "4-6 meses" : "6-9 meses";
+
+  return { salud, potencial, fiabilidad: clamp(fiabilidad, 45, 95), preparacionRecomendada, objetivoCv, tiempoEstimado };
+}
+
 export function generateModPlan(params: {
   aspiracion: Aspiracion;
   objectives: string[];

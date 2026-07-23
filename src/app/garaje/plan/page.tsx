@@ -11,6 +11,7 @@ import { VerifyEmailBanner } from "@/components/VerifyEmailBanner";
 import { PromoRotatingBanner } from "@/components/PromoRotatingBanner";
 import { ScreenHeader } from "@/components/ScreenHeader";
 import { HeroBanner } from "@/components/HeroBanner";
+import { ProjectScorecard } from "@/components/ProjectScorecard";
 import { SectionHeading } from "@/components/SectionHeading";
 import { SpecRow } from "@/components/SpecRow";
 import {
@@ -29,7 +30,16 @@ import {
   CheckCircleIcon,
   WrenchNavIcon,
 } from "@/components/icons";
-import { computeSpecs, generateModPlan, generateRisks, generateMaintenance, type ModStage } from "@/lib/tuning-engine";
+import {
+  computeSpecs,
+  generateModPlan,
+  generateRisks,
+  generateMaintenance,
+  computeScorecard,
+  parsePotenciaValue,
+  type ModStage,
+  type Aspiracion,
+} from "@/lib/tuning-engine";
 
 type ModLogEntry = {
   name: string;
@@ -216,6 +226,17 @@ function PlanContent() {
       }
     : null;
 
+  const scorecard = useMemo(() => {
+    if (!vehicle || !plan) return null;
+    return computeScorecard({
+      mileage: vehicle.mileage,
+      aspiracion: plan.specs.aspiracion as Aspiracion,
+      potencia: { label: plan.specs.potencia, low: parsePotenciaValue(plan.specs.potencia), high: parsePotenciaValue(plan.specs.potencia) },
+      stages: plan.stages,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [vehicle, plan]);
+
   function refreshModProgress() {
     if (!vehicleId) return;
     setModProgressLoading(true);
@@ -319,6 +340,10 @@ function PlanContent() {
 
         <HeroBanner label={vehicle.engine} />
 
+        {scorecard && plan && (
+          <ProjectScorecard scorecard={scorecard} currentCv={parsePotenciaValue(plan.specs.potencia)} />
+        )}
+
         <div className="flex items-center justify-center gap-2">
           {screens.map((label, i) => (
             <div
@@ -363,7 +388,7 @@ function PlanContent() {
               />
             </div>
             <div ref={(el) => { slideRefs.current[2] = el; }} className="w-full shrink-0 px-1">
-              <RecomendacionesScreen risks={plan.risks} maintenance={plan.maintenance} />
+              <RecomendacionesScreen risks={plan.risks} maintenance={plan.maintenance} isPremium={isPremium} vehicleId={vehicleId} />
             </div>
           </div>
         </div>
@@ -598,11 +623,11 @@ function ModificacionesScreen({
           href={`/premium?vehicleId=${vehicleId}`}
           className="flex flex-col gap-2 rounded-xl border border-accent/40 bg-garage-900/40 p-4"
         >
-          <p className="font-semibold text-zinc-100">🔒 Seguimiento real de tus mods</p>
+          <p className="font-semibold text-zinc-100">🔒 Seguimiento real de tu proyecto</p>
           <p className="text-sm text-zinc-300">
             Registra lo que instalas y calculamos tu potencia y par estimados frente al plan, con el siguiente paso lógico.
           </p>
-          <span className="text-sm font-semibold text-accent">Mejorar a Premium →</span>
+          <span className="text-sm font-semibold text-accent">Continuar mi proyecto →</span>
         </a>
       ) : (
         <div className="flex flex-col gap-3 rounded-xl border border-garage-700 bg-garage-900/40 p-4">
@@ -695,11 +720,24 @@ function ModificacionesScreen({
   );
 }
 
-function RecomendacionesScreen({ risks, maintenance }: { risks: string[]; maintenance: string[] }) {
+function RecomendacionesScreen({
+  risks,
+  maintenance,
+  isPremium,
+  vehicleId,
+}: {
+  risks: string[];
+  maintenance: string[];
+  isPremium: boolean;
+  vehicleId: string | null;
+}) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-3 rounded-xl border border-garage-700 bg-garage-900/40 p-4">
         <SectionHeading>Riesgos reales</SectionHeading>
+        <p className="text-xs text-zinc-500">
+          No se trata de restar potencia, sino de que prepares tu coche con tranquilidad y sin sustos.
+        </p>
         <ul className="list-inside list-disc space-y-2 text-sm text-zinc-300">
           {risks.map((risk) => (
             <li key={risk}>{risk}</li>
@@ -714,6 +752,21 @@ function RecomendacionesScreen({ risks, maintenance }: { risks: string[]; mainte
           ))}
         </ul>
       </div>
+
+      {!isPremium && (
+        <a
+          href={`/premium${vehicleId ? `?vehicleId=${vehicleId}` : ""}`}
+          className="flex items-center justify-between gap-3 rounded-xl border border-accent/40 bg-garage-900/40 p-4"
+        >
+          <div>
+            <p className="font-semibold text-zinc-100">🔒 Hay más riesgos y puntos de mantenimiento</p>
+            <p className="mt-1 text-sm text-zinc-400">
+              Específicos de tu motor y kilometraje, junto con el calendario y el orden de preparación, en tu proyecto completo.
+            </p>
+          </div>
+          <span className="shrink-0 text-sm font-semibold text-accent">Ver →</span>
+        </a>
+      )}
     </div>
   );
 }
