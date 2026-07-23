@@ -11,7 +11,6 @@ import { VerifyEmailBanner } from "@/components/VerifyEmailBanner";
 import { PromoRotatingBanner } from "@/components/PromoRotatingBanner";
 import { ScreenHeader } from "@/components/ScreenHeader";
 import { HeroBanner } from "@/components/HeroBanner";
-import { QuickActions } from "@/components/QuickActions";
 import { SectionHeading } from "@/components/SectionHeading";
 import { SpecRow } from "@/components/SpecRow";
 import {
@@ -319,8 +318,6 @@ function PlanContent() {
         )}
 
         <HeroBanner label={vehicle.engine} />
-
-        <QuickActions vehicleId={vehicleId} isPremium={isPremium} />
 
         <div className="flex items-center justify-center gap-2">
           {screens.map((label, i) => (
