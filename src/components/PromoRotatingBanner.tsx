@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 const MESSAGES = [
-  "Descubre una guía detallada para tu vehículo",
+  "Crea el proyecto de tu vehículo",
   "Aquí comienza tu proyecto",
   "Los mejores mods para tu coche",
 ];
