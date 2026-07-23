@@ -107,15 +107,18 @@ export async function GET(req: Request) {
 
       for (const d of pageViewsSnap.docs) {
         const data = d.data() as { path?: string; country?: string | null; city?: string | null; createdAt?: Timestamp };
-        if (data.path) screenCounts.set(data.path, (screenCounts.get(data.path) ?? 0) + 1);
+        const isPanel = data.path?.startsWith("/panel-2847");
+        if (data.path && !isPanel) screenCounts.set(data.path, (screenCounts.get(data.path) ?? 0) + 1);
 
-        const locationLabel = data.city && data.country ? `${data.city}, ${data.country}` : data.country || null;
-        if (locationLabel) locationCounts.set(locationLabel, (locationCounts.get(locationLabel) ?? 0) + 1);
+        if (!isPanel) {
+          const locationLabel = data.city && data.country ? `${data.city}, ${data.country}` : data.country || null;
+          if (locationLabel) locationCounts.set(locationLabel, (locationCounts.get(locationLabel) ?? 0) + 1);
 
-        const createdAtMs = data.createdAt?.toMillis?.();
-        if (createdAtMs && createdAtMs >= oneDayAgoMillis) {
-          const key = `${String(new Date(createdAtMs).getHours()).padStart(2, "0")}:00`;
-          if (hourBuckets.has(key)) hourBuckets.set(key, (hourBuckets.get(key) ?? 0) + 1);
+          const createdAtMs = data.createdAt?.toMillis?.();
+          if (createdAtMs && createdAtMs >= oneDayAgoMillis) {
+            const key = `${String(new Date(createdAtMs).getHours()).padStart(2, "0")}:00`;
+            if (hourBuckets.has(key)) hourBuckets.set(key, (hourBuckets.get(key) ?? 0) + 1);
+          }
         }
       }
 

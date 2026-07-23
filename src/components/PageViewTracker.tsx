@@ -9,6 +9,7 @@ export function PageViewTracker() {
 
   useEffect(() => {
     if (isInternalVisitor()) return;
+    if (pathname.startsWith("/panel-2847")) return;
     fetch("/api/track-visit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
