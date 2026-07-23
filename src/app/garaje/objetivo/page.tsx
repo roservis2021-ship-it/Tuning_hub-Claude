@@ -13,12 +13,21 @@ const OBJECTIVES = [
   { value: "COMPETICION", label: "Competición", description: "Rally, autocross o competición reglada" },
 ];
 
+const POWER_RANGES = [
+  { value: "100-150", label: "100-150 CV" },
+  { value: "150-200", label: "150-200 CV" },
+  { value: "200-250", label: "200-250 CV" },
+  { value: "300+", label: "300+ CV" },
+  { value: "OTRO", label: "Otro / No lo sé" },
+];
+
 function ObjetivoForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const vehicleId = searchParams.get("vehicleId");
 
   const [selected, setSelected] = useState<string[]>([]);
+  const [desiredPower, setDesiredPower] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -33,6 +42,10 @@ function ObjetivoForm() {
       setError("Selecciona al menos un objetivo");
       return;
     }
+    if (!desiredPower) {
+      setError("Selecciona la potencia deseada");
+      return;
+    }
     setError(null);
 
     if (!vehicleId) {
@@ -42,7 +55,7 @@ function ObjetivoForm() {
 
     setSubmitting(true);
     try {
-      await updateDoc(doc(db, "vehicles", vehicleId), { objectives: selected });
+      await updateDoc(doc(db, "vehicles", vehicleId), { objectives: selected, desiredPower });
       router.push(`/garaje/plan?vehicleId=${vehicleId}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "No se pudo guardar el objetivo");
@@ -80,6 +93,28 @@ function ObjetivoForm() {
             </button>
           );
         })}
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <label className="flex flex-col gap-1.5 text-sm">
+          <span className="font-semibold text-zinc-100">Potencia deseada</span>
+          <select
+            className="input"
+            value={desiredPower}
+            onChange={(e) => setDesiredPower(e.target.value)}
+          >
+            <option value="">Selecciona...</option>
+            {POWER_RANGES.map((p) => (
+              <option key={p.value} value={p.value}>
+                {p.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <p className="rounded-md border border-garage-700 bg-garage-900/40 px-4 py-3 text-xs text-zinc-500">
+          Ten en cuenta que no todos los vehículos están diseñados para asumir tanta potencia con garantías.
+          Ajustaremos el plan a lo que tu motor pueda soportar de forma realista.
+        </p>
       </div>
 
       {error && (

@@ -51,6 +51,14 @@ const OBJECTIVE_LABELS: Record<string, string> = {
   COMPETICION: "Competición",
 };
 
+const DESIRED_POWER_LABELS: Record<string, string> = {
+  "100-150": "100-150 CV",
+  "150-200": "150-200 CV",
+  "200-250": "200-250 CV",
+  "300+": "300+ CV",
+  OTRO: "no especificada / no lo sabe",
+};
+
 const client = new Anthropic();
 
 const MILEAGE_BUCKET_SIZE = 20000;
@@ -65,11 +73,12 @@ function buildCacheKey(params: {
   fuelType: string;
   transmission: string;
   objectives?: string[];
+  desiredPower?: string;
 }): string {
   const mileageBucket = Math.floor(params.mileage / MILEAGE_BUCKET_SIZE) * MILEAGE_BUCKET_SIZE;
   const objectivesKey = [...(params.objectives ?? [])].sort().join(",");
   const raw = [
-    "v3-free-limited-plus",
+    "v4-desired-power",
     params.brand,
     params.model,
     params.generation,
@@ -79,6 +88,7 @@ function buildCacheKey(params: {
     params.fuelType,
     params.transmission,
     objectivesKey,
+    params.desiredPower || "NONE",
   ].join("|");
   return createHash("sha256").update(raw).digest("hex");
 }
@@ -89,13 +99,13 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "JSON inválido" }, { status: 400 });
   }
 
-  const { brand, model, generation, engine, motorCode, mileage, fuelType, transmission, objectives } = body;
+  const { brand, model, generation, engine, motorCode, mileage, fuelType, transmission, objectives, desiredPower } = body;
 
   if (!brand || !model || !engine || typeof mileage !== "number") {
     return NextResponse.json({ error: "Faltan datos del vehículo" }, { status: 400 });
   }
 
-  const cacheKey = buildCacheKey({ brand, model, generation, engine, motorCode, mileage, fuelType, transmission, objectives });
+  const cacheKey = buildCacheKey({ brand, model, generation, engine, motorCode, mileage, fuelType, transmission, objectives, desiredPower });
 
   try {
     const cached = await getDoc(doc(db, "planCache", cacheKey));
@@ -108,6 +118,7 @@ export async function POST(req: Request) {
   }
 
   const objectiveLabels = (objectives ?? []).map((o: string) => OBJECTIVE_LABELS[o] ?? o);
+  const desiredPowerLabel = desiredPower ? DESIRED_POWER_LABELS[desiredPower] ?? desiredPower : null;
 
   try {
     const response = await client.messages.parse({
@@ -129,6 +140,8 @@ Dado un vehículo concreto y el uso que le va a dar su propietario, genera un an
 
 2. Plan de modificaciones (VERSIÓN GRATUITA — LIMITADA A PROPÓSITO): muestra SOLO las 3 primeras etapas del plan, con 3-4 ítems concisos cada una. Es una vista previa gratuita: debe ser útil y despertar interés, pero incompleta. Cada etapa lleva su propia 'note' explicando brevemente por qué importa esa etapa o qué se consigue con ella (no la reserves solo para la última). En la última etapa, además, insinúa que hay más etapas y detalle en el plan completo (Premium), sin sonar a anuncio agresivo (ej: "Las siguientes etapas (frenos, suspensión, ajuste final) se detallan en el plan completo"). Si el kilometraje es alto, la etapa 0/1 debe ser de puesta a punto antes de tocar potencia. No recomiendes modificaciones agresivas en motores con mucho kilometraje sin antes recomendar una revisión.
 
+Si el propietario ha indicado una potencia deseada, orienta el plan hacia ese objetivo cuando sea razonable para ese motor concreto. Si el objetivo es poco realista para la mecánica de base (por ejemplo, pedir 300+ CV en un motor atmosférico pequeño de serie, o una subida desproporcionada para el tipo de motor), dilo honestamente en la 'note' de la etapa correspondiente o al final del plan: explica hasta dónde es razonable llegar de forma fiable con ESE motor y por qué, sin prometer una cifra que no sea alcanzable con garantías.
+
 3. Riesgos y mantenimiento (LIMITADO): MÁXIMO 3 riesgos y MÁXIMO 3 puntos de mantenimiento, los más importantes, cada uno en una frase corta. Riesgos reales y específicos de ESE coche (no genéricos), incluyendo lo legal en España (ITV, homologación, seguro) cuando aplique.
 
 Regla general: en la versión gratuita sé BREVE y selectivo. Da lo esencial y deja claro implícitamente que el plan completo aporta más. Si algo es estimación, márcalo con la palabra ("estimado"), no con una frase.`,
@@ -145,6 +158,7 @@ Regla general: en la versión gratuita sé BREVE y selectivo. Da lo esencial y d
 - Kilometraje: ${mileage} km
 
 Objetivo de uso declarado por el propietario: ${objectiveLabels.length ? objectiveLabels.join(", ") : "no especificado"}
+Potencia deseada declarada por el propietario: ${desiredPowerLabel ?? "no especificada"}
 
 Genera el análisis y plan de modificaciones para este vehículo.`,
         },
